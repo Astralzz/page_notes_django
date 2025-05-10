@@ -1,111 +1,208 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from tasks.serializers import TaskViewSerializer
+from .validators import validate_photo_size, validate_photo_format
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import Profile
 
-# @serializer perfile - "Form Request - Resource"
-class RegisterSerializer(serializers.ModelSerializer):
+# Modelo
+t_user = get_user_model()
+
+"""
+Serializer de validaciones base el modelo Profile.
+"""
+class BaseProfileSerializerValidator(serializers.ModelSerializer):
     
-    # Campos para serialización
-    password = serializers.CharField(write_only=True)
+    # Campos del modelo a validar
     nombre = serializers.CharField(
-    max_length=100,
-    write_only=True,
-    required=False,
-    allow_blank=True
+        max_length=100,
+        allow_blank=True,
+        error_messages={
+            'max_length': 'El nombre no puede tener más de 100 caracteres.',
+            'required': 'El nombre es obligatorio.',
+            'blank': 'El nombre no puede estar vacío.'
+        }
     )
+    
     apellido = serializers.CharField(
-        max_length=100, 
-        write_only=True, 
-        required=False, 
-        allow_blank=True
+        max_length=100,
+        allow_blank=True,
+        error_messages={
+            'max_length': 'El apellido no puede tener más de 100 caracteres.',
+            'required': 'El apellido es obligatorio.',
+            'blank': 'El apellido no puede estar vacío.'
+        }
     )
+
     telefono = serializers.CharField(
-        max_length=20, 
-        write_only=True, 
-        required=False, 
-        allow_blank=True
+        max_length=20,
+        allow_blank=True,
+        required=False,
+        error_messages={
+            'max_length': 'El teléfono no puede tener más de 20 caracteres.',
+            'blank': 'El teléfono no puede estar vacío.'
+        }
     )
+
     foto = serializers.ImageField(
-        write_only=True, 
-        required=False, 
-        allow_null=True
+        required=False,
+        allow_null=True,
+        validators=[validate_photo_size, validate_photo_format],
+        error_messages={
+            'invalid_image': 'La imagen subida no es válida.',
+            'max_length': 'La imagen no puede tener más de 3 MB.',
+            'required': 'La imagen es obligatoria.',
+            'invalid': 'El formato de la imagen no es válido.',
+            'blank': 'La imagen no puede estar vacía.'
+        },
     )
 
-    # Modelo
     class Meta:
-        model = User
-        # Campos a serializar
-        fields = ('username', 'email', 'password')
+        model = Profile
+        fields = ('nombre', 'apellido', 'telefono', 'foto')
 
-    # Validación de datos
+"""
+Serializer para la creación de perfil.
+
+- nombre y apellido requeridos.
+"""
+class ProfileCreateSerializer(BaseProfileSerializerValidator):
+    # Campos del modelo a validar
+    class Meta(BaseProfileSerializerValidator.Meta):
+        extra_kwargs = {
+            'nombre': {'required': True},
+            'apellido': {'required': True}
+        }
+
+"""
+Serializer para la actualización de perfil.
+
+- nombre y apellido opcionales.
+"""
+class ProfileUpdateSerializer(BaseProfileSerializerValidator):
+    # Campos del modelo a validar
+    class Meta(BaseProfileSerializerValidator.Meta):
+        extra_kwargs = {
+            'nombre': {'required': False},
+            'apellido': {'required': False}
+        }
+
+"""
+Serializer para visualizar el perfil.
+"""
+class ProfileReadSerializer(serializers.ModelSerializer):
+    
+    # Campos del modelo a visualizar
+    class Meta:
+        model = Profile
+        fields = ('nombre', 'apellido', 'telefono', 'foto')
+
+"""
+Serializador para registro de User - Profile.
+"""
+class RegisterProfileSerializer(serializers.ModelSerializer):
+    
+    # Perfil y password
+    profile = ProfileCreateSerializer(write_only=True, required=True)
+    password = serializers.CharField(write_only=True)
+
+    # Modelo de usuario
+    class Meta:
+        model = t_user
+        fields = ('username', 'email', 'password', 'profile')
+        extra_kwargs = {
+            'username': {'error_messages': {
+                'blank': 'El nombre de usuario no puede estar vacío.',
+                'required': 'El nombre de usuario es obligatorio.',
+                'unique': 'Este nombre de usuario ya está en uso.'
+            }},
+            'email': {'error_messages': {
+                'blank': 'El correo no puede estar vacío.',
+                'required': 'El correo es obligatorio.',
+                'invalid': 'El formato del correo no es válido.',
+                'unique': 'Este correo ya está registrado.'
+            }},
+            'password': {'error_messages': {
+                'blank': 'La contraseña no puede estar vacía.',
+                'required': 'La contraseña es obligatoria.',
+                'min_length': 'La contraseña debe tener al menos 8 caracteres.',
+                'max_length': 'La contraseña no puede tener más de 128 caracteres.'
+            }},
+            'profile': {'error_messages': {
+                'blank': 'El perfil no puede estar vacío.',
+                'required': 'El perfil es obligatorio.'
+            }}
+        }
+
+    """
+    Validar contraseña
+    """
+    def validate_password(self, value):
+        try:
+            validate_password(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(e.messages)
+        return value
+
+    """
+    Crear perfil
+    """
     def create(self, validated_data):
-        # Extraer datos del perfil
-        nombre = validated_data.pop('nombre', '')
-        apellido = validated_data.pop('apellido', '')
-        telefono = validated_data.pop('telefono', '')
-        foto = validated_data.pop('foto', None)
-
-        # Crear usuario
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data.get('email', ''),
-            password=validated_data['password']
-        )
-
-        # Crear perfil asociado
-        Profile.objects.create(
-            user=user,
-            nombre=nombre,
-            apellido=apellido,
-            telefono=telefono,
-            foto=foto
-        )
-
+        profile_data = validated_data.pop('profile')
+        user = t_user.objects.create_user(**validated_data)
+        Profile.objects.create(user=user, **profile_data)
         return user
-    
-# @serializer - Actualización y Detalles
-class UserProfileSerializer(serializers.ModelSerializer):
-    
-    # Campos para serialización
-    nombre = serializers.CharField(source='profile.nombre', required=True)
-    apellido = serializers.CharField(source='profile.apellido', required=True)
-    telefono = serializers.CharField(source='profile.telefono', required=True)
-    foto = serializers.ImageField(source='profile.foto', required=False)
 
-    # Modelo
+"""
+Serializador para actualizar datos de User + Profile.
+"""
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    
+    # Perfil
+    profile = ProfileUpdateSerializer(required=False)
+
+    # Modelo de usuario
     class Meta:
-        model = User
-        fields = (
-            'id', 
-            'username', 
-            'email', 
-            'nombre',
-            'apellido', 
-            'telefono', 
-            'foto', 
-        )
+        model = t_user
+        fields = ('id', 'username', 'email', 'profile')
         extra_kwargs = {
             'username': {'required': False},
             'email': {'required': False}
         }
-    # Actualizar datos del usuario
+
+    """
+    Actualizar el perfil.
+    """
     def update(self, instance, validated_data):
-       
-        # Actualizar datos del usuario
-        instance.username = validated_data.get('username', instance.username)
-        instance.email = validated_data.get('email', instance.email)
+        
+        # Perfil
+        profile_data = validated_data.pop('profile', {})
+
+        # Actualizar el usuario
+        for attr, value in validated_data.items():
+            # ? Si el campo es password
+            if attr == 'password':
+                instance.set_password(value) # Encriptar contraseña
+            else:
+                setattr(instance, attr, value)
         instance.save()
 
-        # Actualizar datos del perfil
-        profile_data = validated_data.get('profile', {})
-        profile = instance.profile
-        profile.nombre = profile_data.get('nombre', profile.nombre)
-        profile.apellido = profile_data.get('apellido', profile.apellido)
-        profile.telefono = profile_data.get('telefono', profile.telefono)
-        
-        # Si se proporciona una nueva foto, actualizarla
-        if 'foto' in profile_data:
-            profile.foto = profile_data['foto']
-        profile.save()
+        # Actualizar el perfil
+        if profile_data:
+            Profile.objects.filter(user=instance).update(**profile_data)
 
         return instance
+
+"""
+Serializador para visualizar datos de User + Profile.
+"""
+class UserProfileDetailSerializer(serializers.ModelSerializer):
+    
+    # Perfil
+    profile = ProfileReadSerializer(read_only=True)
+    tasks = TaskViewSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = t_user
+        fields = ('id', 'username', 'email', 'profile', 'tasks')

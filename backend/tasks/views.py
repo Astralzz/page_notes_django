@@ -1,21 +1,40 @@
-from rest_framework import viewsets, permissions
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, filters
+from backend.permissions import IsOwnerTasks
+from .serializers import TaskViewSerializer
 from .models import Task
-from .serializers import TaskSerializer
 
-# ViewSet = Controller
 class TaskViewSet(viewsets.ModelViewSet):
     
-    # Serializer 
-    serializer_class = TaskSerializer
-    # Permissions
-    permission_classes = [permissions.IsAuthenticated] 
+    # Conjunto de vistas para las tareas
+    queryset = Task.objects.all().order_by('-created_at')
+    serializer_class = TaskViewSerializer
+    
+    # Permisos
+    permission_classes = [IsAuthenticated, IsOwnerTasks]  
 
-    # Devuelve solo tareas del usuario autenticado (como un scope userId() en Eloquent)
+    # Filtros
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title']  # Filtrado por el título de la tarea
+    
+    # Lista de tareas
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user)
+        # ? El usuario es un super usuario
+        if self.request.user.is_staff:
+            # Devuelvo todas las tareas
+            return Task.objects.all().order_by('-created_at')
+        # Devuelvo solo las tareas del usuario autenticado
+        return Task.objects.filter(user=self.request.user).order_by('-created_at')
 
-    # Asigna automáticamente el usuario a la tarea (como Auth::user()->tasks()->create([...]))
+    # Al crear una tarea
     def perform_create(self, serializer):
+        # Asignar el usuario automáticamente a la tarea cuando se crea
         serializer.save(user=self.request.user)
 
- 
+    # Al actualizar una tarea
+    def perform_update(self, serializer):
+        # ? La tarea esta completada
+        # if serializer.validated_data.get('completed') == True:
+        #     # Lógica adicional
+        #     pass
+        serializer.save()

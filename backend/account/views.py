@@ -1,24 +1,20 @@
-from rest_framework import generics, permissions, pagination
+from rest_framework import generics, permissions
 from django.contrib.auth.models import User
-from .serializers import RegisterSerializer, UserProfileSerializer
-from rest_framework import generics, permissions, pagination, filters
-
-# Permiso personalizado - Solo el admin puede [actualizar o eliminar]
-class IsOwnerOrAdmin(permissions.BasePermission):
-    # Verificar los permisos de la solicitud
-    def has_object_permission(self, request, view, obj):
-        return obj == request.user or request.user.is_staff
+from .serializers import RegisterProfileSerializer, UpdateProfileSerializer, UserProfileDetailSerializer
+from rest_framework import generics, permissions, filters
+from rest_framework.exceptions import NotFound
+from backend.permissions import IsOwnerOrAdmin
 
 # Registro 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = RegisterSerializer
+    serializer_class = RegisterProfileSerializer
     permission_classes = [permissions.AllowAny]  # Registros sin login
 
 # Listar Usuarios 
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserProfileSerializer
+    serializer_class = UserProfileDetailSerializer
     permission_classes = [permissions.IsAdminUser]  # Solo admins pueden listar
     
     # Filtros de búsqueda
@@ -37,9 +33,18 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     
     # Permisos
     queryset = User.objects.all()
-    serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
 
-    # Eliminar usuario y su perfil (CASCADE)
+    # Obtener el usuario o actualizar
+    def get_serializer_class(self):
+        try:
+            # ? Es solicitud PUT
+            if self.request.method == 'PUT':
+                return UpdateProfileSerializer # PUT - Actualizar perfil
+            return UserProfileDetailSerializer # GET - Ver perfil
+        except User.DoesNotExist:
+            raise NotFound("Este usuario no existe o no fue encontrado.")
+
+    # ! Eliminar usuario y su perfil (CASCADE)
     def perform_destroy(self, instance):
         instance.delete()

@@ -1,6 +1,8 @@
 # PAGINA NOTAS DJANGO
 
-## COMANDOS
+## 🌐 COMANDOS
+
+### Django
 
 Migrar los datos a la BD
 
@@ -33,3 +35,21 @@ Verificar si una sub aplicacion correctamente creada
 Insertar n semillas aleatorios
 
     python manage.py seed_data --users=20 --tasks=50
+
+### React
+
+---
+
+## 📦 Librerías Usadas
+
+### React
+
+- **React Router**: gestión de rutas.  
+- **Redux Toolkit**: gestión del estado.  
+- **Tailwind CSS 4.0**: estilos rápidos y eficientes.  
+- **Sass**: preprocesador de estilos.  
+- **Docker**: configuración para facilitar el despliegue.  
+- **Vite**: bundler para un desarrollo más rápido.  
+- **Formik**: gestión de formularios y validaciones.  
+- **Yup**: validación de esquemas en tiempo de ejecución.  
+- **Axios**: Realizar consulta `XMLHttpRequests`, `HTTPS`, etc.
