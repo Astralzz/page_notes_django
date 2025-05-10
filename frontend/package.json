@@ -1,0 +1,73 @@
+{
+  "name": "frontend-django-ejcc",
+  "private": false,
+  "version": "1.0.0",
+  "type": "module",
+  "author": {
+    "name": "Edain Jesús Cortez Cerón",
+    "email": "edain.cortez@outlook.com",
+    "url": "https://github.com/Astralzz"
+  },
+  "license": "MIT",
+  "keywords": [
+    "tsx",
+    "web",
+    "react",
+    "react-app",
+    "fullstack",
+    "typescript",
+    "tailwindcss",
+    "template",
+    "frontend",
+    "laravel",
+    "tailwindcss",
+    "javascript",
+    "css",
+    "html",
+    "scss",
+    "sass",
+    "vite",
+    "redux",
+    "formik",
+    "yup",
+    "react-router-dom",
+    "react-icons",
+    "react-redux",
+    "react-toolkit",
+    "axios",
+    "astralz"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.6.0",
+    "@tailwindcss/vite": "^4.0.8",
+    "axios": "^1.8.2",
+    "formik": "^2.4.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.2.0",
+    "sass": "^1.85.0",
+    "tailwindcss": "^4.0.8",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.22.0",
+    "vite": "^6.1.0"
+  }
+}

@@ -1,0 +1,59 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+*.sqlite
+
+# Ignore Django's local database
+db.sqlite3
+
+# Ignore media files (user-uploaded)
+media/
+
+# Static files (if generated)
+staticfiles/
+static/
+media/
+
+# Local env files
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# macOS
+.DS_Store
+
+# Backup files
+*~
+*.bak
+
+# Migrations (if you don't want to version control them)
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
