@@ -2,9 +2,6 @@ import { JSX } from "react";
 import { RouteObject } from "react-router-dom";
 import { IconType } from "react-icons";
 import EmailForm from "../components/forms/EmailForm";
-import ModalPage from "../pages/ModalPage";
-import ApiPage from "../pages/ApiPage";
-
 // Tipo de ruta
 export type RouteAppType = {
   route: RouteObject;
@@ -38,8 +35,6 @@ const routesListApp: RouteAppType[] = [
   generateRouterApp({ path: "home" }),
   generateRouterApp({ path: "news" }),
   generateRouterApp({ path: "form-element", element: <EmailForm /> }),
-  generateRouterApp({ path: "modal-element", element: <ModalPage /> }),
-  generateRouterApp({ path: "api-example", element: <ApiPage /> }),
 ] as const; // Hace que la lista sea inmutable
 
 export default routesListApp;

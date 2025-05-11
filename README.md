@@ -53,3 +53,7 @@ Insertar n semillas aleatorios
 - **Formik**: gestión de formularios y validaciones.  
 - **Yup**: validación de esquemas en tiempo de ejecución.  
 - **Axios**: Realizar consulta `XMLHttpRequests`, `HTTPS`, etc.
+- **React Hot Toast**: Notificaciones simples y efectivas.
+- **Lucide Icons**: Iconos minimistas.
+- **React Error Boundary**: Manejar errores no controlados.
+- **Clsx**: Combinar clases (className) condicionalmente de forma limpia y legible..
