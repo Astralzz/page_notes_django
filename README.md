@@ -57,3 +57,7 @@ Insertar n semillas aleatorios
 - **Lucide Icons**: Iconos minimistas.
 - **React Error Boundary**: Manejar errores no controlados.
 - **Clsx**: Combinar clases (className) condicionalmente de forma limpia y legible..
+- **Gsap**: Animaciones minimalistas y bonitas
+- **UI Shadcn**: Componentes UI
+- **Redux-persist**: Preservar estados con redux
+- **React-dropzone**: Gancho React simple para crear una zona de arrastrar y soltar para archivos compatible con HTML5.

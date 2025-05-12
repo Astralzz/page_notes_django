@@ -27,6 +27,7 @@ class ApiAuthService extends ApiService {
   }): Promise<AuthResponse> {
     return await this.request<AuthResponse>("POST", `${this.CRUD_PATH}/`, {
       data: auth,
+      asFormData: true,
     });
   }
 

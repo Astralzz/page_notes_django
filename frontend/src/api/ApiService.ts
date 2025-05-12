@@ -10,7 +10,14 @@ abstract class ApiService {
   /**
    * @var {?string} - URL del backend
    */
-  private URL_BACKEND_API = process.env.REACT_APP_URL_BACKEND_API || undefined;
+  private URL_BACKEND_API?: string;
+
+  /**
+   * @description - Constructor de la clase ApiService
+   */
+  constructor() {
+    this.URL_BACKEND_API = ""; //process?.env?.REACT_APP_URL_BACKEND_API ?? undefined;
+  }
 
   /**
    * @description - Método abstracto para obtener el endpoint
@@ -187,11 +194,11 @@ abstract class ApiService {
    *
    * @returns {Promise<T>} Respuesta de la API
    */
-  protected async request<T>(
+  protected async request<T, D = object>(
     method: "GET" | "POST" | "PUT" | "DELETE",
     path: string,
     extra?: {
-      data?: any;
+      data?: D;
       headerApi?: HeaderApiPayload;
       asFormData?: boolean;
       timeout?: number;

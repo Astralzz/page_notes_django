@@ -55,7 +55,7 @@ class ApiUserService extends ApiService {
    *
    * @returns {Promise<User>} - Respuesta con el user actualizado
    */
-  async updateUser(alumnoId: number, alumnoData: User): Promise<User> {
+  async updateUser(alumnoData: User, alumnoId: number): Promise<User> {
     return this.request<User>("PUT", `${this.CRUD_PATH}/user/${alumnoId}/`, {
       data: alumnoData,
     });

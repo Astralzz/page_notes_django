@@ -1,23 +1,172 @@
 /* Use of tailwind */
 @import "tailwindcss";
+@import "tw-animate-css";
 
-@theme {
-  /* Colores de la interfaz */
-  --color-primary-50: rgba(245, 245, 245, 1);
-  --color-primary-100: rgba(230, 230, 230, 1);
-  --color-primary-200: rgba(200, 200, 200, 1);
-  --color-primary-300: rgba(160, 160, 160, 1);
-  --color-primary-400: rgba(100, 100, 100, 1);
-  --color-primary-500: rgba(50, 50, 50, 1);
-  --color-primary-600: rgba(30, 30, 30, 1);
-  --color-primary-700: rgba(20, 20, 20, 1);
-  --color-primary-800: rgba(10, 10, 10, 1);
-  --color-primary-900: rgba(0, 0, 0, 1);
-  --color-primary-950: rgba(0, 0, 0, 0.87); 
+/* Modo oscuro automático */
+@custom-variant dark (&:is(.dark *));
+/* Modo oscuro manual (dark | light */
+/* @custom-variant dark (&:where(.dark, .dark *)); */
+
+:root {
+  /* Colores de la lib shadcn */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Primary Color */
+  --pry-50: #fffcf2;
+  --pry-100: #fff9e6;
+  --pry-200: #fff3c4;
+  --pry-300: #ffe69c;
+  --pry-400: #ffd86f;
+  --pry-500: #ffc94b;
+  --pry-600: #fcb024;
+  --pry-700: #d9901b;
+  --pry-800: #b57115;
+  --pry-900: #935911;
+  --pry-950: #4a2c05;
 }
 
-/* Modo oscuro manual (dark | light */
-@custom-variant dark (&:where(.dark, .dark *));
+.dark {
+  /* Colores de la lib shadcn */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+
+  /* Primary Color dark */
+  --pry-50: #fafaf9;
+  --pry-100: #f5f5f4;
+  --pry-200: #e7e5e4;
+  --pry-300: #d6d3d1;
+  --pry-400: #a8a29e;
+  --pry-500: #78716c;
+  --pry-600: #57534e;
+  --pry-700: #44403c;
+  --pry-800: #292524;
+  --pry-900: #1c1917;
+  --pry-950: #0f0d0c;
+}
+
+@theme inline {
+  /* Colores de la lib shadcn */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Primary Color */
+  --color-pry-50: var(--pry-50);
+  --color-pry-100: var(--pry-100);
+  --color-pry-200: var(--pry-200);
+  --color-pry-300: var(--pry-300);
+  --color-pry-400: var(--pry-400);
+  --color-pry-500: var(--pry-500);
+  --color-pry-600: var(--pry-600);
+  --color-pry-700: var(--pry-700);
+  --color-pry-800: var(--pry-800);
+  --color-pry-900: var(--pry-900);
+  --color-pry-950: var(--pry-950);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 
 /* Ajustes globales */
 *,
@@ -27,7 +176,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   list-style: none;

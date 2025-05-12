@@ -1,7 +1,7 @@
 import { JSX } from "react";
 import { RouteObject } from "react-router-dom";
 import { IconType } from "react-icons";
-import EmailForm from "../components/forms/EmailForm";
+
 // Tipo de ruta
 export type RouteAppType = {
   route: RouteObject;
@@ -34,7 +34,6 @@ const routesListApp: RouteAppType[] = [
   generateRouterApp({ path: "", label: "Home", element: <></> }),
   generateRouterApp({ path: "home" }),
   generateRouterApp({ path: "news" }),
-  generateRouterApp({ path: "form-element", element: <EmailForm /> }),
 ] as const; // Hace que la lista sea inmutable
 
 export default routesListApp;
