@@ -1,4 +1,3 @@
-// Login.tsx
 import React, { useState, useRef } from "react";
 import RegisterFormik from "@/components/formik/RegisterFormik";
 import LoginFormik from "@/components/formik/LoginFormik";
@@ -51,7 +50,12 @@ const Login: React.FC = () => {
     };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pry-100 to-pry-300">
+    <div
+      className={clsx(
+        "min-h-screen flex items-center justify-center",
+        "bg-gradient-to-br from-pry-100 to-pry-300 dark:from-pry-950 dark:to-pry-800"
+      )}
+    >
       <div
         className={clsx("w-full perspective-1000", {
           "max-w-3xl": isLogin,
@@ -62,6 +66,7 @@ const Login: React.FC = () => {
           ref={cardRef}
           className={clsx(
             "relative rounded-3xl shadow-2xl py-8 px-4 bg-white/95 backdrop-blur-md",
+            "dark:bg-pry-600/95 dark:text-white",
             "transform-style-preserve-3d border transition-shadow",
             "border-pry-100 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.1)]"
           )}

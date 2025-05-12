@@ -44,8 +44,20 @@ class ApiUserService extends ApiService {
    *
    * @returns {Promise<User>} - Respuesta con el user
    */
-  async getUser(alumnoId: number): Promise<User> {
+  async getUserById(alumnoId: number): Promise<User> {
     return this.request<User>("GET", `${this.CRUD_PATH}/user/${alumnoId}/`);
+  }
+
+  /**
+   * Método para obtener un user por token
+   * @param token
+   *
+   * @returns {Promise<User>} - Respuesta con el user
+   */
+  async getUserByToken(data: { token: string }): Promise<User> {
+    return this.request<User>("GET", `${this.CRUD_PATH}/me/`, {
+      authorization: `Bearer ${data.token}`,
+    });
   }
 
   /**

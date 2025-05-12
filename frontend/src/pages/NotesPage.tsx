@@ -1,0 +1,101 @@
+import React from "react";
+import { useAuthApp } from "@/hooks/useAuthApp";
+import { Plus } from "lucide-react";
+import gsap from "gsap";
+import clsx from "clsx";
+
+/**
+ *
+ * NotesPage component - Main
+ *
+ * @returns {JSX.Element}
+ */
+const NotesPage: React.FC = () => {
+  // Hooks
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const { user } = useAuthApp();
+
+  // Animación al montar
+  React.useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+      tl.from(".notes-title", { y: -20, opacity: 0, duration: 0.5 });
+      tl.from(".create-note-button", {
+        scale: 0.9,
+        opacity: 0,
+        duration: 0.4,
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative w-full">
+      {/* Header */}
+      <div
+        className={clsx(
+          "flex justify-between items-center mb-6",
+          "notes-title"
+        )}
+      >
+        <h2
+          className={clsx(
+            "text-3xl font-bold",
+            "text-pry-800 dark:text-pry-100"
+          )}
+        >
+          Mis Notas
+        </h2>
+
+        {/* Botón flotante */}
+        <button className={clsx("create-note-button group")}>
+          <div
+            className={clsx(
+              "flex items-center gap-2 px-3 py-2 rounded-xl shadow-md transition-transform transform",
+              "group-hover:scale-105 group-hover:rotate-1 hover:shadow-xl",
+              "bg-pry-500 dark:bg-pry-700 hover:bg-pry-600 dark:hover:bg-pry-600",
+              "text-white text-sm hover:cursor-pointer"
+            )}
+          >
+            <Plus className="h-4 w-4" />
+            <span className="font-medium">Crear nueva nota</span>
+          </div>
+        </button>
+      </div>
+
+      {/* Grid de Notas */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {user?.tasks?.length ? (
+          [...user.tasks, ...user.tasks].map((task) => (
+            <div className="group">
+              <div
+                key={task.id}
+                className={clsx(
+                  "note-card p-4 rounded-xl shadow-md transition-all duration-300",
+                  "transform transition-transform",
+                  "group-hover:scale-110 group-hover:rotate-1 hover:shadow-3xl",
+                  "bg-white dark:bg-pry-950 cursor-pointer"
+                )}
+              >
+                <h3 className="font-semibold text-pry-900 dark:text-pry-100">
+                  {task.title || "Sin título"}
+                </h3>
+                <p className="text-sm text-pry-700 dark:text-pry-300">
+                  {task.description || "Sin descripción"}
+                </p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className={clsx("note-card", "text-pry-800 dark:text-pry-200")}>
+            No tienes notas aún.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default NotesPage;

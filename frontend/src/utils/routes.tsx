@@ -1,6 +1,7 @@
 import { JSX } from "react";
 import { RouteObject } from "react-router-dom";
 import { IconType } from "react-icons";
+import NotesPage from "@/pages/NotesPage";
 
 // Tipo de ruta
 export type RouteAppType = {
@@ -31,9 +32,8 @@ export const generateRouterApp = ({
 
 // Lista de rutas
 const routesListApp: RouteAppType[] = [
-  generateRouterApp({ path: "", label: "Home", element: <></> }),
-  generateRouterApp({ path: "home" }),
-  generateRouterApp({ path: "news" }),
+  generateRouterApp({ path: "", label: "Home", element: <NotesPage /> }),
+  generateRouterApp({ path: "home", label: "Home", element: <NotesPage /> }),
 ] as const; // Hace que la lista sea inmutable
 
 export default routesListApp;

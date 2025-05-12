@@ -13,7 +13,7 @@ import { setNotifyDefault } from "../funcs/notify";
  * @returns {Promise<void>} - Promesa que se resuelve cuando el formulario se envía correctamente.
  */
 export async function submitFormPost<T, V extends Record<string, any>>(
-  action: (data: V, id?: number) => Promise<T>,
+  action: (data: V) => Promise<T>,
   values: V,
   {
     onSuccess,
@@ -22,7 +22,7 @@ export async function submitFormPost<T, V extends Record<string, any>>(
     onFinish,
   }: {
     onSuccess: (response: T) => void;
-    onError: (errors: unknown) => void;
+    onError?: (errors: unknown) => void;
     resetFields?: (values: V) => Partial<V>;
     onFinish?: () => void;
   },
@@ -32,7 +32,7 @@ export async function submitFormPost<T, V extends Record<string, any>>(
 ): Promise<void> {
   try {
     // ? Enviamos el formulario
-    const res = await action(values, 0);
+    const res = await action(values);
 
     // ? Si hay respuesta
     if (res) {
@@ -53,7 +53,6 @@ export async function submitFormPost<T, V extends Record<string, any>>(
 
     // ! Error
   } catch (errs) {
-    console.log("Error en el submit", errs);
     // ? Mostramos errores
     if (options?.isSendNotify) {
       getErrorMessages(errs).forEach((msg) => setNotifyDefault(msg, "error"));

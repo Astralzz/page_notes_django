@@ -8,6 +8,12 @@ import CheckboxFormik from "./CheckboxFormik";
 import { globalApiAuthService } from "@/api/ApiAuthService";
 import { AuthResponse } from "@/types/apiTypes";
 import { submitFormPost } from "@/utils/formSubmit";
+import { useDispatch } from "react-redux";
+import { updateTokens } from "@/redux/slices/authSlice";
+
+// Prueba
+// woodardgary
+// password123
 
 // Schemas
 const registerSchema = {
@@ -23,7 +29,11 @@ const registerSchema = {
       .required("Requerido"),
     recording: Yup.boolean().required("Requerido"),
   }),
-  initialValues: { username: "", password: "", recording: false },
+  initialValues: {
+    username: "woodardgary",
+    password: "password123",
+    recording: false,
+  },
 };
 
 // Props
@@ -39,8 +49,12 @@ interface LoginFormikProps<T = any> {
  * @returns {JSX.Element} - A Formik form for user registration
  */
 const LoginFormik: React.FC<LoginFormikProps> = ({ onSubmitFinish }) => {
+  // Redux
+  const dispatch = useDispatch();
+
   // ? Hooks
   const [isPending, startTransition] = React.useTransition();
+
   /**
    * Handle form submission
    *
@@ -53,20 +67,24 @@ const LoginFormik: React.FC<LoginFormikProps> = ({ onSubmitFinish }) => {
         // Obtenemos valores
         const { username, password } = values;
 
+        // ? Validamos
+        if (!username || !password) {
+          formikHelpers.setFieldError("username", "Requerido");
+          formikHelpers.setFieldError("password", "Requerido");
+          return;
+        }
+
         // Enviamos el formulario
         submitFormPost<AuthResponse, { username: string; password: string }>(
-          globalApiAuthService.getToken,
+          globalApiAuthService.getToken.bind(globalApiAuthService), //  bind - Sirve para enlazar el contexto de la función
           {
             username,
             password,
           },
           {
             onSuccess: (res) => {
-              console.log("Respuesta", res);
+              dispatch(updateTokens(res));
               onSubmitFinish?.(res);
-            },
-            onError: (err) => {
-              console.log("Error", err);
             },
             // Resetear campos
             resetFields: (values) => ({
@@ -81,7 +99,7 @@ const LoginFormik: React.FC<LoginFormikProps> = ({ onSubmitFinish }) => {
         );
       });
     },
-    [onSubmitFinish]
+    [onSubmitFinish, dispatch]
   );
 
   return (
@@ -124,7 +142,7 @@ const LoginFormik: React.FC<LoginFormikProps> = ({ onSubmitFinish }) => {
             label="¿Mantener sesión iniciada?"
             classNames={{
               container: "mt-4",
-              label: "text-xs text-gray-700",
+              label: "text-xs",
             }}
           />
         </>

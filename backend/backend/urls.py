@@ -19,11 +19,10 @@ from django.urls import path, include
 from django.http import JsonResponse
 from django.conf.urls.static import static
 from django.conf import settings
+from .views import CustomTokenObtainPairView
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView
 )
-
 
 # Root "/"
 def server_status_view(request):
@@ -34,7 +33,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/account/', include('account.urls')), 
     path('api/task/', include('tasks.urls')), 
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 

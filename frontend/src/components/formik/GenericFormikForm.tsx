@@ -66,6 +66,7 @@ const GenericFormikForm: React.FC<GenericFormikFormProps> = ({
           className={clsx(
             "text-3xl font-bold mb-8 bg-clip-text text-transparent text-center",
             "bg-gradient-to-r from-pry-600 to-pry-400",
+            "dark:from-pry-400 dark:to-pry-200",
             classNames?.title
           )}
         >
@@ -90,6 +91,8 @@ const GenericFormikForm: React.FC<GenericFormikFormProps> = ({
                   "w-full text-white py-6 rounded-xl transition-all shadow-lg",
                   "bg-gradient-to-r from-pry-500 to-pry-400 hover:cursor-pointer",
                   "hover:from-pry-600 hover:to-pry-500 hover:shadow-pry-200",
+                  "dark:from-pry-800 dark:to-pry-700",
+                  "dark:hover:from-pry-800 dark:hover:to-pry-800 dark:hover:shadow-pry-700",
                   button.className
                 )}
                 disabled={loading || formik.isSubmitting}

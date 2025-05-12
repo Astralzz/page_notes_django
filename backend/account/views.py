@@ -2,9 +2,39 @@ from rest_framework import generics, permissions
 from django.contrib.auth.models import User
 from .serializers import RegisterProfileSerializer, UpdateProfileSerializer, UserProfileDetailSerializer
 from rest_framework import generics, permissions, filters
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, AuthenticationFailed
 from backend.permissions import IsOwnerOrAdmin
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+
+# Obtener user por token
+class CurrentUserViewToken(APIView):
+    
+    # Datos
+    permission_classes = [permissions.IsAuthenticated]
+
+    # Get response
+    def get(self, request):
+        
+        try: 
+            # ? El token no está presente o no es válido
+            if not request.user.is_authenticated:
+                raise AuthenticationFailed("La autenticación ha caducado o no es válida.")
+            
+            # ? El usuario no es quien debería ser (por ejemplo, token pertenece a otro usuario)
+            if request.user != request.user: 
+                raise AuthenticationFailed("El usuario no está autenticado correctamente.")
+            
+            # Si las verificaciones pasan, devuelve la información del perfil
+            serializer = UserProfileDetailSerializer(request.user)
+            return Response(serializer.data)
+        
+        except AuthenticationFailed:
+            # Capturamos la excepción y devolvemos un mensaje genérico
+            raise AuthenticationFailed("La autenticación ha fallado.")
+
+    
 # Registro 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()

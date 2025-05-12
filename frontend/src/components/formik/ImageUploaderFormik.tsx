@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { Accept, useDropzone } from "react-dropzone";
 import { ErrorMessage } from "formik";
-import clsx from "clsx";
 import { ImageIcon, X } from "lucide-react";
+import clsx from "clsx";
 
 // Props
 interface ImageUploaderFormikProps {
@@ -69,7 +69,7 @@ export const ImageUploaderFormik: React.FC<ImageUploaderFormikProps> = ({
   return (
     <div className={clsx("space-y-2", className)}>
       {label && !preview && (
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
           {label}
         </label>
       )}
@@ -107,13 +107,20 @@ export const ImageUploaderFormik: React.FC<ImageUploaderFormikProps> = ({
           )}
         >
           <input {...getInputProps()} />
-          <ImageIcon className="mx-auto mb-2 text-pry-500" size={24} />
-          <p className="text-sm text-pry-600">
+          <ImageIcon
+            className="mx-auto mb-2 text-pry-500 dark:text-pry-300"
+            size={24}
+          />
+          <p className="text-sm text-pry-600 dark:text-pry-300">
             {isDragActive
               ? "Suelta la imagen aquí"
               : "Arrastra o haz click para subir tu foto"}
           </p>
-          {helpText && <p className="mt-2 text-xs text-gray-500">{helpText}</p>}
+          {helpText && (
+            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              {helpText}
+            </p>
+          )}
         </div>
       )}
 
@@ -132,7 +139,7 @@ export const ImageUploaderFormik: React.FC<ImageUploaderFormikProps> = ({
         <ErrorMessage
           name={name}
           component="div"
-          className="text-sm text-red-600"
+          className="text-sm dark:text-red-400 text-red-600"
         />
       )}
     </div>

@@ -38,12 +38,14 @@ const CheckboxFormik: React.FC<CheckboxFormikProps> = ({
             onCheckedChange={(value) =>
               form.setFieldValue(name, value === true)
             }
+            className="hover:cursor-pointer"
           />
           <label
             htmlFor={name}
             className={clsx(
               "text-sm font-medium leading-none peer-disabled:cursor-not-allowed",
               "peer-disabled:opacity-70 hover:cursor-pointer",
+              "text-pry-700 dark:text-pry-300",
               classNames?.label
             )}
           >
@@ -52,7 +54,10 @@ const CheckboxFormik: React.FC<CheckboxFormikProps> = ({
           <ErrorMessage
             name={name}
             component="div"
-            className={clsx("text-sm text-red-600 mt-1", classNames?.error)}
+            className={clsx(
+              "text-sm text-red-600 dark:text-red-400 mt-1",
+              classNames?.error
+            )}
           />
         </div>
       )}

@@ -16,6 +16,8 @@ export const getErrorMessages = (errors: unknown): string[] => {
       // ? Es un arreglo
     } else if (Array.isArray(err)) {
       err.forEach(traverse);
+    } else if (err instanceof Error) {
+      messages.push(err.message); // 💡 Aquí
       // ? Es un objeto
     } else if (typeof err === "object" && err !== null) {
       Object.values(err).forEach(traverse);

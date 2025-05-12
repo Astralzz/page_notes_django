@@ -26,7 +26,12 @@ const ToggleAuthMessage: React.FC<ToggleAuthMessageProps> = ({
   classNames,
 }) => {
   return (
-    <p className={clsx("text-center text-pry-600 mt-4", classNames?.message)}>
+    <p
+      className={clsx(
+        "text-center text-pry-600 dark:text-pry-300 mt-4",
+        classNames?.message
+      )}
+    >
       {message}{" "}
       <button
         onClick={onAction}

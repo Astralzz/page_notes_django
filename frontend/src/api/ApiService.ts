@@ -1,5 +1,11 @@
-import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from "axios";
+import axios, {
+  AxiosRequestConfig,
+  AxiosError,
+  AxiosResponse,
+  AxiosHeaderValue,
+} from "axios";
 import { HeaderApiPayload } from "../const/api/HeaderApi.ts";
+import { viewDebugApp } from "@/funcs/debug.ts";
 
 /**
  * @description - Clase base para manejar operaciones HTTP comunes
@@ -8,7 +14,7 @@ import { HeaderApiPayload } from "../const/api/HeaderApi.ts";
  */
 abstract class ApiService {
   /**
-   * @var {?string} - URL del backend
+   * @var {?string} - URL backend
    */
   private URL_BACKEND_API?: string;
 
@@ -16,7 +22,7 @@ abstract class ApiService {
    * @description - Constructor de la clase ApiService
    */
   constructor() {
-    this.URL_BACKEND_API = ""; //process?.env?.REACT_APP_URL_BACKEND_API ?? undefined;
+    this.URL_BACKEND_API = import.meta.env.VITE_URL_BACKEND_API;
   }
 
   /**
@@ -92,21 +98,22 @@ abstract class ApiService {
    * Configuración de axios
    *
    * @param headerApi - Headers personalizados
-   * @param asFormData - Si es FormData
+   * @param asMultipartFormData - Si es FormData
    * @param timeout - Tiempo de espera
    *
    * @returns {AxiosRequestConfig}
    */
   private getConfigAxios = (
     headerApi?: HeaderApiPayload,
-    asFormData?: boolean,
-    timeout?: number
+    timeout?: number,
+    authorization?: AxiosHeaderValue
   ): AxiosRequestConfig => {
     // ? Configuración
     const config: AxiosRequestConfig = {
       headers: {
+        "Accept-Language": "es", // Idioma predeterminado
+        Authorization: authorization,
         ...headerApi,
-        "Content-Type": asFormData ? "multipart/form-data" : "application/json",
       },
       timeout, // n segundos
     };
@@ -130,8 +137,10 @@ abstract class ApiService {
       const responseData = axiosErr.response?.data as Record<string, any>;
 
       // ? Existe error
-      if (responseData?.error) {
-        return Promise.reject(new Error(`Error: ${responseData.error}`));
+      if (responseData?.error || responseData?.detail) {
+        return Promise.reject(
+          new Error(`${responseData?.error ?? responseData?.detail}`)
+        );
       }
 
       // ? Es un objeto
@@ -202,22 +211,39 @@ abstract class ApiService {
       headerApi?: HeaderApiPayload;
       asFormData?: boolean;
       timeout?: number;
+      authorization?: AxiosHeaderValue;
     }
   ): Promise<T> {
     try {
-      const { data, headerApi, asFormData = true, timeout } = extra ?? {};
+      const {
+        data,
+        headerApi,
+        asFormData = true,
+        timeout,
+        authorization,
+      } = extra ?? {};
 
       // Detecta si hay que usar FormData
       const payload = asFormData && data ? this.toFormData(data) : data;
 
       // Configuración
-      const config = this.getConfigAxios(
-        headerApi,
-        Boolean(asFormData && data),
-        timeout
-      );
+      const config = this.getConfigAxios(headerApi, timeout, authorization);
       const baseURL = this.getUrlBackend();
       const url = `${baseURL}/${path}`;
+
+      // Mostramos en consola
+      viewDebugApp(
+        {
+          url,
+          config,
+          method,
+          payload,
+          authorization,
+        },
+        {
+          hiddenLineFinish: true,
+        }
+      );
 
       let response;
       switch (method) {
@@ -237,11 +263,30 @@ abstract class ApiService {
           throw new Error("Método HTTP no soportado");
       }
 
+      viewDebugApp(
+        {
+          res: "Respuesta",
+          response,
+        },
+        {
+          hiddenLineStart: true,
+        }
+      );
+
       // Comprobamos data
       return this.checkIntegrityData(response);
 
       // ! Error
     } catch (error: unknown) {
+      viewDebugApp(
+        {
+          res: "Error",
+          error,
+        },
+        {
+          hiddenLineStart: true,
+        }
+      );
       return await this.catchAxiosError<T>(error);
     }
   }

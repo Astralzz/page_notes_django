@@ -91,7 +91,7 @@ const InputFormik: React.FC<InputFormikProps> = ({
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 text-pry-500"
+                className="absolute right-3 text-pry-500 hover:cursor-pointer"
                 tabIndex={-1}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -101,7 +101,7 @@ const InputFormik: React.FC<InputFormikProps> = ({
           <ErrorMessage
             name={name}
             component="div"
-            className="text-sm text-red-600 mt-1"
+            className="text-sm text-red-600 dark:text-red-400 mt-1"
           />
         </div>
       )}

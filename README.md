@@ -60,4 +60,5 @@ Insertar n semillas aleatorios
 - **Gsap**: Animaciones minimalistas y bonitas
 - **UI Shadcn**: Componentes UI
 - **Redux-persist**: Preservar estados con redux
+- **Moment**: Mejor librería para control de fechas y horas
 - **React-dropzone**: Gancho React simple para crear una zona de arrastrar y soltar para archivos compatible con HTML5.

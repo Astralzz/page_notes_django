@@ -26,4 +26,13 @@ Todos los cambios importantes de este proyecto se documentarán en este archivo.
 - Se creó un diseño minimalista
 - Se agregaron nuevas librerías y animaciones
 
+## [0.0.5] - 12-05-2025
+
+- Se creo el Dashboard
+- Se creo la pagina de notas
+- Se mejoro el diseño oscuro
+- Se agregaron animaciones
+- Se Terminó la lógica de iniciar y cerrar sesión
+- El Frontend se conectó satisfactoriamente al backend
+
 ---
