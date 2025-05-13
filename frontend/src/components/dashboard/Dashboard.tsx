@@ -4,11 +4,12 @@ import { Button } from "../ui/button";
 import { LogOut, Moon, Sun, User as UserIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useReduxDispatch } from "@/redux/hook";
-import { removeAuthAll } from "@/redux/slices/authSlice";
+import { removeAllDataAuth } from "@/redux/slices/authSlice";
 import { updateTheme } from "@/redux/slices/themeSlice";
 import { useThemeApp } from "@/hooks/useThemeApp";
 import gsap from "gsap";
 import clsx from "clsx";
+import ModalUser from "../modals/ModalUser";
 
 // Props
 interface DashboardProps {
@@ -24,6 +25,7 @@ interface DashboardProps {
  */
 const Dashboard: React.FC<DashboardProps> = ({ children, user }) => {
   // Vars
+  const [isOpenModalUser, setOpenModalUser] = React.useState<boolean>(false);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
 
   // Variables redux
@@ -54,7 +56,7 @@ const Dashboard: React.FC<DashboardProps> = ({ children, user }) => {
   // Cerrar sesión
   const handleLogout = React.useCallback(() => {
     //Eliminamos todo lo de auth
-    dispatch(removeAuthAll());
+    dispatch(removeAllDataAuth());
   }, [dispatch]);
 
   // Cambiar tema
@@ -88,7 +90,7 @@ const Dashboard: React.FC<DashboardProps> = ({ children, user }) => {
           {/* Nombre */}
           <div className="flex items-center gap-4 dashboard-header">
             <Avatar className="h-14 w-14 ring-2 ring-pry-500 shadow-md">
-              <AvatarImage src={user?.profile?.foto} alt="Foto de perfil" />
+              <AvatarImage src={user?.profile?.foto_url} alt="Foto de perfil" />
               <AvatarFallback
                 className={clsx("", {
                   "text-white": isThemeDark,
@@ -126,6 +128,7 @@ const Dashboard: React.FC<DashboardProps> = ({ children, user }) => {
 
             {/* Ver Perfil */}
             <Button
+              onClick={() => setOpenModalUser(true)}
               className={clsx(
                 "bg-pry-500 hover:bg-pry-600 text-white",
                 "rounded-xl shadow-lg transition flex items-center gap-2 px-4 py-2",
@@ -162,6 +165,15 @@ const Dashboard: React.FC<DashboardProps> = ({ children, user }) => {
           </p>
         </footer>
       </section>
+
+      {/* Modal del usuario */}
+      <ModalUser
+        statusModal={{
+          closeModal: () => setOpenModalUser(false),
+          isOpen: isOpenModalUser,
+        }}
+        user={user}
+      />
     </div>
   );
 };

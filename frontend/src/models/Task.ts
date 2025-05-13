@@ -4,7 +4,7 @@
  * @description This module defines the Task model and its properties.
  */
 interface Task {
-  readonly id: string;
+  readonly id: number;
   title?: string;
   description?: string;
   completed: boolean;

@@ -7,9 +7,9 @@ import * as Yup from "yup";
 import CheckboxFormik from "./CheckboxFormik";
 import { globalApiAuthService } from "@/api/ApiAuthService";
 import { AuthResponse } from "@/types/apiTypes";
-import { submitFormPost } from "@/utils/formSubmit";
-import { useDispatch } from "react-redux";
-import { updateTokens } from "@/redux/slices/authSlice";
+import { submitForm } from "@/utils/submitsActions";
+import { useTransitionSubmit } from "@/hooks/useTransitionSubmit";
+import useAuthActions from "@/hooks/useAuthActions";
 
 // Prueba
 // woodardgary
@@ -32,81 +32,72 @@ const registerSchema = {
   initialValues: {
     username: "woodardgary",
     password: "password123",
-    recording: false,
+    recording: true,
   },
 };
 
 // Props
 interface LoginFormikProps<T = any> {
-  onSubmitFinish?: (data: T) => void | Promise<void>;
+  onSubmitFinishSuccess?: (data: T) => void | Promise<void>;
 }
 
 /**
- *  LoginFormik component
+ * LoginFormik component
  *
- * @param props - Props for the LoginFormik component
+ * Formulario para iniciar sesión usando Formik.
  *
- * @returns {JSX.Element} - A Formik form for user registration
+ * @param props - Props opcionales como `onSubmitFinish` para manejar el resultado del login.
+ * @returns JSX.Element
  */
-const LoginFormik: React.FC<LoginFormikProps> = ({ onSubmitFinish }) => {
-  // Redux
-  const dispatch = useDispatch();
+const LoginFormik: React.FC<LoginFormikProps> = ({ onSubmitFinishSuccess }) => {
+  // Hook actions
+  const { updateTokens, updateRecording } = useAuthActions();
 
-  // ? Hooks
-  const [isPending, startTransition] = React.useTransition();
+  // Transition hook
+  const [isPending, submit] = useTransitionSubmit({
+    fn: React.useCallback(
+      async (
+        values: FormikValues,
+        formikHelpers: FormikHelpers<FormikValues>
+      ) => {
+        // Variables
+        const { username, password, recording } = values;
 
-  /**
-   * Handle form submission
-   *
-   * @param type - The type of form (login or register)
-   * @returns {Function} - A function that handles form submission
-   */
-  const onSubmit = React.useCallback(
-    (values: FormikValues, formikHelpers: FormikHelpers<FormikValues>) => {
-      startTransition(async () => {
-        // Obtenemos valores
-        const { username, password } = values;
-
-        // ? Validamos
+        // ? Existen
         if (!username || !password) {
           formikHelpers.setFieldError("username", "Requerido");
           formikHelpers.setFieldError("password", "Requerido");
           return;
         }
 
-        // Enviamos el formulario
-        submitFormPost<AuthResponse, { username: string; password: string }>(
-          globalApiAuthService.getToken.bind(globalApiAuthService), //  bind - Sirve para enlazar el contexto de la función
-          {
-            username,
-            password,
-          },
+        await submitForm<AuthResponse, { username: string; password: string }>(
+          globalApiAuthService.getToken.bind(globalApiAuthService),
+          { username, password },
           {
             onSuccess: (res) => {
-              dispatch(updateTokens(res));
-              onSubmitFinish?.(res);
+              // Actualizamos
+              updateRecording(recording === true);
+              updateTokens(res);
+              onSubmitFinishSuccess?.(res);
             },
-            // Resetear campos
             resetFields: (values) => ({
               username: values.username,
               password: "",
             }),
-            onFinish: () => {
-              formikHelpers.setSubmitting(false);
-            },
+            onFinish: () => formikHelpers.setSubmitting(false),
           },
-          { isSendNotify: true }
+          { isSendNotifyError: true }
         );
-      });
-    },
-    [onSubmitFinish, dispatch]
-  );
+      },
+      [onSubmitFinishSuccess, updateRecording, updateTokens]
+    ),
+  });
 
   return (
     <GenericFormikForm
       {...registerSchema}
       title="Inicia sesión"
-      onSubmit={onSubmit}
+      onSubmit={submit}
       classNames={{
         form: "px-4 py-2",
       }}
@@ -141,7 +132,7 @@ const LoginFormik: React.FC<LoginFormikProps> = ({ onSubmitFinish }) => {
             name="recording"
             label="¿Mantener sesión iniciada?"
             classNames={{
-              container: "mt-4",
+              container: "ml-2 mt-4",
               label: "text-xs",
             }}
           />

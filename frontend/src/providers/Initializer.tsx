@@ -1,11 +1,11 @@
 import React from "react";
 import { useAuthApp } from "@/hooks/useAuthApp";
 import User from "@/models/User";
-import { submitFormPost } from "@/utils/formSubmit";
+import { submitForm } from "@/utils/submitsActions";
 import { Toaster } from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { removeTokens, updateUser } from "@/redux/slices/authSlice";
 import { globalApiUserService } from "@/api/ApiUserService";
+import useAuthActions from "@/hooks/useAuthActions";
+import { useTransitionSubmit } from "@/hooks/useTransitionSubmit";
 
 // Props
 interface InitializerProps {
@@ -20,12 +20,9 @@ interface InitializerProps {
  * @returns {JSX.Element} - Initializer component
  */
 const Initializer: React.FC<InitializerProps> = ({ children }) => {
-  // Redux
-  const dispatch = useDispatch();
-  const { tokens } = useAuthApp();
-
   // ? Hooks
-  const [isPending, startTransition] = React.useTransition();
+  const { updateUser, removeTokens } = useAuthActions();
+  const { tokens, recordingAuth } = useAuthApp();
 
   /**
    * Handle form submission
@@ -33,43 +30,45 @@ const Initializer: React.FC<InitializerProps> = ({ children }) => {
    * @param type - The type of form (login or register)
    * @returns {Function} - A function that handles form submission
    */
-  const onSubmit = React.useCallback(() => {
-    startTransition(async () => {
-      // ? Existe token
-      if (!tokens?.access) {
-        return;
-      }
+  const [isPendingGetUser, submitGetUser] = useTransitionSubmit({
+    fn: React.useCallback(
+      async (accessToken: string) => {
+        // ? No existe token
+        if (!accessToken) return;
 
-      // data
-      const data = {
-        token: tokens?.access,
-      };
+        // Enviamos el formulario
+        submitForm<User, { token: string }>(
+          globalApiUserService.getUserByToken.bind(globalApiUserService),
+          {
+            token: accessToken,
+          },
+          {
+            onSuccess(res) {
+              updateUser(res);
 
-      // Enviamos el formulario
-      submitFormPost<User, { token: string }>(
-        globalApiUserService.getUserByToken.bind(globalApiUserService),
-        data,
-        {
-          onSuccess(res) {
-            console.log(res);
-            dispatch(updateUser(res));
+              // ? No se quiere recordar la sesión
+              if (!recordingAuth) removeTokens();
+            },
+            onError() {
+              removeTokens();
+            },
           },
-          onError() {
-            dispatch(removeTokens());
-          },
-        },
-        { isSendNotify: true }
-      );
-    });
-  }, [dispatch, tokens?.access]);
+          { isSendNotifyError: true }
+        );
+      },
+      [recordingAuth, removeTokens, updateUser]
+    ),
+  });
 
   // Efecto
   React.useEffect(() => {
-    onSubmit();
-  }, [dispatch, onSubmit]);
+    // ? No existe
+    if (tokens?.access) submitGetUser(tokens.access);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokens?.access]);
 
   // Efecto para inicializar la autenticación
-  if (isPending) return <div>Cargando autenticación...</div>;
+  if (isPendingGetUser) return <div>Cargando autenticación...</div>;
 
   return (
     <>

@@ -1,4 +1,4 @@
-import User from "../models/User";
+import User, { UserRegister } from "../models/User";
 import { ApiListResponse, ParamQueryList } from "../types/apiTypes";
 import ApiService from "./ApiService";
 
@@ -32,9 +32,12 @@ class ApiUserService extends ApiService {
    * @param alumnoData Datos del nuevo user
    * @returns Respuesta de la creación del user
    */
-  async createUser(alumnoData: User): Promise<User> {
-    return this.request<User>("POST", `${this.CRUD_PATH}/register/`, {
+  async createUser(alumnoData: UserRegister): Promise<{
+    username: string;
+  }> {
+    return this.request<UserRegister>("POST", `${this.CRUD_PATH}/register/`, {
       data: alumnoData,
+      isContendFiles: true,
     });
   }
 

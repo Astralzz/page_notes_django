@@ -1,155 +1,132 @@
 // components/Modal/ModalDefault.tsx
 import React from "react";
-import { FaTimes } from "react-icons/fa";
-import styles from "../../styles/modules/Modal.module.scss";
+import clsx from "clsx";
+import { gsap } from "gsap";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "../ui/dialog";
+import { useThemeApp } from "@/hooks/useThemeApp";
 
-// Props
 interface ModalDefaultProps {
   children: React.ReactNode;
   title?: string;
-  size?: "sm" | "md" | "lg" | "xl" | "2xl";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "full";
   maxHeight?: string;
-  closeOnBackdropClick?: boolean;
-  isThemeDark?: boolean;
+  hideHeader?: boolean;
+  fullWidth?: boolean;
+  footer?: React.ReactNode;
   statusModal: {
     isOpen: boolean;
     closeModal: () => void;
   };
+  classNames?: {
+    modalContainer?: string;
+    header?: string;
+    title?: string;
+    closeButton?: string;
+    content?: string;
+    footer?: string;
+  };
 }
 
-/**
- * Modal por defecto
- *
- * @param {ModalDefaultProps} props
- *
- * @returns {JSX.Element}
- */
+const sizeClasses = {
+  sm: "max-w-sm",
+  md: "max-w-md",
+  lg: "max-w-lg",
+  xl: "max-w-xl",
+  "2xl": "max-w-2xl",
+  full: "w-full max-w-full",
+};
+
 const ModalDefault: React.FC<ModalDefaultProps> = ({
   children,
   title,
-  statusModal: { closeModal, isOpen },
+  statusModal: { isOpen, closeModal },
   size = "md",
   maxHeight = "70vh",
-  isThemeDark = false,
-  closeOnBackdropClick = true,
+  hideHeader = false,
+  fullWidth = false,
+  footer,
+  classNames,
 }) => {
-  // Variables
-  const [isClosing, setIsClosing] = React.useState(false);
+  // Estado
   const modalRef = React.useRef<HTMLDivElement>(null);
 
-  // Al cerrar el modal
-  const handleClose = React.useCallback(() => {
-    setIsClosing(true);
-    setTimeout(() => {
-      closeModal();
-      setIsClosing(false);
-    }, 300);
-  }, [closeModal]);
+  // Variables redux
+  const { isThemeDark } = useThemeApp();
 
-  // Al hacer click en el fondo
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // ? Si se cierra al hacer click en el fondo
-    if (closeOnBackdropClick && e.target === e.currentTarget) handleClose();
-  };
-
-  // Efecto para el manejo del modal
   React.useEffect(() => {
-    // Evento para cerrar
-    const handleKeyDown = (e: KeyboardEvent) =>
-      e.key === "Escape" && handleClose();
-
-    // ? Esta abierta el modal
-    if (isOpen) {
-      // Cambiamos estilos
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-      const scrollbarWidth =
-        window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-
-      // Evento para cerrar
-      window.addEventListener("keydown", handleKeyDown);
-
-      // Auto-focus en el primer elemento interactivo
-      const focusableElements = modalRef.current?.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    if (isOpen && modalRef.current) {
+      gsap.fromTo(
+        modalRef.current,
+        { y: 30, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" }
       );
-
-      // Auto-focus en el primer elemento interactivo
-      if (focusableElements?.length)
-        (focusableElements[0] as HTMLElement).focus();
     }
-
-    return () => {
-      // Cambiamos estilos
-      document.body.style.overflow = "auto";
-      document.documentElement.style.overflow = "auto";
-      document.body.style.paddingRight = "";
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleClose, isOpen]);
-
-  // ? Si el modal no está abierto
-  if (!isOpen) return null;
+  }, [isOpen]);
 
   return (
-    <div
-      className={`${styles.backdrop} ${
-        isClosing ? styles.leave : styles.enter
-      } flex items-center justify-center fixed inset-0 px-4`}
-      role="dialog"
-      aria-modal="true"
-      onClick={handleBackdropClick}
-      data-close-on-click={closeOnBackdropClick}
-    >
-      {/* Modal */}
-      <div
+    <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
+      <DialogContent
         ref={modalRef}
-        className={`w-full max-w-${size} sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl 
-          ${styles.modalContainer} ${
-          isClosing ? styles.modalLeave : styles.modalEnter
-        } 
-    bg-white shadow-lg rounded-lg relative`}
-        onClick={(e) => e.stopPropagation()}
+        className={clsx(
+          "rounded-xl border p-6 shadow-xl transition-all bg-gradient-to-br",
+          sizeClasses[size],
+          fullWidth && "w-full",
+          {
+            "from-pry-100 to-pry-300": !isThemeDark,
+            "dark from-pry-950 to-pry-800": isThemeDark,
+            "text-white": isThemeDark,
+            "text-gray-950": !isThemeDark,
+          },
+          classNames?.modalContainer
+        )}
+        style={{ maxHeight }}
       >
         {/* Header */}
-        <div
-          className={`flex justify-between items-center border-b px-4 py-3 rounded-t-lg ${
-            isThemeDark
-              ? "border-gray-100 text-gray-100 bg-gray-700"
-              : "border-gray-700 text-gray-900 bg-gray-300"
-          }`}
-        >
-          {/* Título */}
-          <h2 className="text-xl font-semibold" id="modal-title">
-            {title}
-          </h2>
-
-          {/* Botón de cierre */}
-          <button
-            className="p-2 rounded-full hover:cursor-pointer hover:opacity-40 transition-colors duration-200"
-            onClick={handleClose}
-            aria-label="Cerrar modal"
+        {!hideHeader && (
+          <DialogHeader
+            className={clsx("mb-4 flex justify-between", classNames?.header)}
           >
-            <FaTimes className="w-5 h-5" />
-          </button>
-        </div>
+            <DialogTitle
+              className={clsx(
+                "text-lg font-semibold leading-tight",
+                classNames?.title
+              )}
+            >
+              {title}
+            </DialogTitle>
+            {/* Descripcion para adaptadores */}
+            <DialogDescription className="sr-only">{title}</DialogDescription>
+          </DialogHeader>
+        )}
 
-        {/* Contenido */}
+        {/* Body */}
         <div
-          className={`p-3 overflow-y-auto rounded-b-lg ${
-            isThemeDark
-              ? "text-gray-100 bg-gray-700"
-              : "text-gray-900 bg-gray-50"
-          }`}
+          className={clsx(
+            "overflow-y-auto custom-scrollbar",
+            classNames?.content
+          )}
           style={{ maxHeight }}
-          aria-labelledby="modal-title"
-          id="modal-description"
         >
           {children}
         </div>
-      </div>
-    </div>
+
+        {/* Footer */}
+        {footer && (
+          <DialogFooter
+            className={clsx("mt-4 border-t pt-4", classNames?.footer)}
+          >
+            {footer}
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -6,18 +6,23 @@ import Task from "./Task";
  * @description This module defines the User model and its properties.
  */
 interface User {
-  readonly id: string;
-  username?: string;
+  readonly id: number;
+  username: string;
   email?: string;
   profile?: Profile;
   tasks?: Task[];
 }
 
+// Register model: igual que User pero sin id y con contraseña
+export type UserRegister = Omit<User, "id" | "tasks"> & {
+  password: string;
+};
+
 export type Profile = {
   nombre?: string;
   apellido?: string;
   telefono?: string;
-  foto?: string;
+  foto_url?: string;
 };
 
 export default User;

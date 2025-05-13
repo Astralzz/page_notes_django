@@ -6,7 +6,7 @@ import { authSlice, AuthSliceType } from "../slices/authSlice";
 const persistConfig = {
   key: "auth-persist-reducer",
   storage,
-  whitelist: ["tokens"], // Solo los tokens se guardarán en el almacenamiento local
+  whitelist: ["tokens", "recordingAuth"], // Datos a guardar
 };
 
 // Reducer persistente para la autenticación

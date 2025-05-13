@@ -72,7 +72,7 @@ const InputFormik: React.FC<InputFormikProps> = ({
   return (
     <Field name={name}>
       {({ field }: FieldProps) => (
-        <div className={clsx("mb-4", className)}>
+        <div className={clsx("mb-3", className)}>
           <div className="relative flex items-center">
             {icon && <div className="absolute left-3 text-pry-500">{icon}</div>}
             <Input
@@ -84,6 +84,7 @@ const InputFormik: React.FC<InputFormikProps> = ({
                 icon && "pl-10",
                 showPasswordToggle && "pr-10",
                 "focus:ring-2 focus:ring-pry-500 transition-all",
+                "rounded-lg",
                 inputClassName
               )}
             />

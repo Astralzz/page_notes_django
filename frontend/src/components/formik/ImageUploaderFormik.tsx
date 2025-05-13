@@ -89,7 +89,7 @@ export const ImageUploaderFormik: React.FC<ImageUploaderFormikProps> = ({
             <button
               type="button"
               onClick={clearImage}
-              className="absolute top-[-10px] right-[-10px] bg-white text-red-600 rounded-full p-1 shadow hover:bg-red-100"
+              className="absolute hover:cursor-pointer top-[-10px] right-[-10px] bg-white text-red-600 rounded-full p-1 shadow hover:bg-red-100"
               aria-label="Eliminar imagen"
             >
               <X size={24} />

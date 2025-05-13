@@ -2,7 +2,6 @@ import React, { useState, useRef } from "react";
 import RegisterFormik from "@/components/formik/RegisterFormik";
 import LoginFormik from "@/components/formik/LoginFormik";
 import ToggleAuthMessage from "@/components/Toggles/ToggleAuthMessage";
-import { FormikHelpers, FormikValues } from "formik";
 import { gsap } from "gsap";
 import clsx from "clsx";
 
@@ -37,18 +36,6 @@ const Login: React.FC = () => {
       });
   };
 
-  /**
-   * Handle form submission
-   *
-   * @param type - The type of form (login or register)
-   * @returns {Function} - A function that handles form submission
-   */
-  const handleSubmit =
-    (type: "login" | "register") =>
-    (values: FormikValues, formikHelpers: FormikHelpers<FormikValues>) => {
-      console.log(`${type === "login" ? "Login" : "Register"} values:`, values);
-    };
-
   return (
     <div
       className={clsx(
@@ -76,7 +63,7 @@ const Login: React.FC = () => {
               {isLogin ? (
                 <LoginFormik />
               ) : (
-                <RegisterFormik onSubmit={handleSubmit("register")} />
+                <RegisterFormik onSubmitFinishSuccess={toggleMode} />
               )}
               {/* Toggle message */}
               <ToggleAuthMessage

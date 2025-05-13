@@ -92,11 +92,24 @@ class ProfileUpdateSerializer(BaseProfileSerializerValidator):
 Serializer para visualizar el perfil.
 """
 class ProfileReadSerializer(serializers.ModelSerializer):
-    
-    # Campos del modelo a visualizar
+    # Método para obtener la URL completa de la foto
+    foto_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Profile
-        fields = ('nombre', 'apellido', 'telefono', 'foto')
+        fields = ('nombre', 'apellido', 'telefono', 'foto', 'foto_url')
+    
+    def get_foto_url(self, obj):
+        # Verificar si la foto existe
+        if obj.foto:
+            # Verifica si request está disponible en el contexto
+            request = self.context.get('request')
+            if request:
+                # Devuelve la URL completa usando la URL del servidor
+                return request.build_absolute_uri(obj.foto.url)
+            # Si no hay request (por ejemplo, en entorno de localhost), construir manualmente
+            return f'http://localhost:8000{obj.foto.url}'
+        return None
 
 """
 Serializador para registro de User - Profile.

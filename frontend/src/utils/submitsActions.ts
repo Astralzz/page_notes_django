@@ -12,7 +12,7 @@ import { setNotifyDefault } from "../funcs/notify";
  *
  * @returns {Promise<void>} - Promesa que se resuelve cuando el formulario se envía correctamente.
  */
-export async function submitFormPost<T, V extends Record<string, any>>(
+export async function submitForm<T, V extends Record<string, any>>(
   action: (data: V) => Promise<T>,
   values: V,
   {
@@ -27,7 +27,8 @@ export async function submitFormPost<T, V extends Record<string, any>>(
     onFinish?: () => void;
   },
   options?: {
-    isSendNotify?: boolean;
+    notifySuccessMessage?: string;
+    isSendNotifyError?: boolean;
   }
 ): Promise<void> {
   try {
@@ -36,6 +37,10 @@ export async function submitFormPost<T, V extends Record<string, any>>(
 
     // ? Si hay respuesta
     if (res) {
+      // ? Mostramos alerta
+      if (options?.notifySuccessMessage)
+        setNotifyDefault(options.notifySuccessMessage, "success");
+
       onSuccess?.(res);
 
       // ? Resetear valores
@@ -54,7 +59,7 @@ export async function submitFormPost<T, V extends Record<string, any>>(
     // ! Error
   } catch (errs) {
     // ? Mostramos errores
-    if (options?.isSendNotify) {
+    if (options?.isSendNotifyError) {
       getErrorMessages(errs).forEach((msg) => setNotifyDefault(msg, "error"));
     }
     // ? Errors es diferente

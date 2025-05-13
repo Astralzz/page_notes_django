@@ -35,4 +35,11 @@ Todos los cambios importantes de este proyecto se documentarán en este archivo.
 - Se Terminó la lógica de iniciar y cerrar sesión
 - El Frontend se conectó satisfactoriamente al backend
 
+## [0.0.6] - 13-05-2025
+
+- Se avanzo en la vista
+- Se termino el registro
+- Re termino modal del perfil
+- Se mejoro lógica para guardar la imagen en django
+
 ---

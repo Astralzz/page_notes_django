@@ -6,12 +6,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type AuthSliceType = {
   user: null | User;
   tokens: null | AuthResponse;
+  recordingAuth: boolean;
 };
 
 // Definimos datos iniciales
 const initialState: AuthSliceType = {
   user: null,
   tokens: null,
+  recordingAuth: true,
 };
 
 // Creamos un slice
@@ -22,26 +24,31 @@ export const authSlice = createSlice({
     // * UPDATE
 
     // Actualizar todo el estado de auth
-    updateAuthAll: (state, action: PayloadAction<AuthSliceType>) => {
+    updateAuthAllAuth: (state, action: PayloadAction<AuthSliceType>) => {
       state.user = action.payload.user;
       state.tokens = action.payload.tokens;
+      state.recordingAuth = action.payload.recordingAuth;
     },
     // Actualizar el usuario
-    updateUser: (state, action: PayloadAction<User | null>) => {
+    updateUserAuth: (state, action: PayloadAction<User | null>) => {
       state.user = action.payload;
     },
+    // Actualizar el recording
+    updateRecordingAuth: (state, action: PayloadAction<boolean>) => {
+      state.recordingAuth = action.payload;
+    },
     // Actualizar los tokens
-    updateTokens: (state, action: PayloadAction<AuthResponse | null>) => {
+    updateTokensAuth: (state, action: PayloadAction<AuthResponse | null>) => {
       state.tokens = action.payload;
     },
     // Actualizar el token de acceso
-    updateAccessToken: (state, action: PayloadAction<string | null>) => {
+    updateAccessTokenAuth: (state, action: PayloadAction<string | null>) => {
       if (state?.tokens) {
         state.tokens.access = action?.payload ?? undefined;
       }
     },
     // Actualizar el token de refresco
-    updateRefreshToken: (state, action: PayloadAction<string | null>) => {
+    updateRefreshTokenAuth: (state, action: PayloadAction<string | null>) => {
       if (state?.tokens) {
         state.tokens.refresh = action?.payload ?? undefined;
       }
@@ -50,27 +57,27 @@ export const authSlice = createSlice({
     // ! DELETE
 
     // Eliminar todos los datos de autenticación
-    removeAuthAll: (state) => {
+    removeAllDataAuth: (state) => {
       state.user = null;
       state.tokens = null;
+      state.recordingAuth = false;
     },
     // Eliminar el token de acceso y refresco
-    removeTokens: (state) => {
+    removeTokensAuth: (state) => {
       if (state?.tokens) {
-        state.tokens.access = undefined;
-        state.tokens.refresh = undefined;
+        state.tokens = null;
       }
     },
     // Eliminar el token de acceso
-    removeAccessToken: (state) => {
+    removeAccessTokenAuth: (state) => {
       if (state?.tokens) state.tokens.access = undefined;
     },
     // Eliminar el token de refresco
-    removeRefreshToken: (state) => {
+    removeRefreshTokenAuth: (state) => {
       if (state?.tokens) state.tokens.refresh = undefined;
     },
     // Eliminar usuario
-    removeUser: (state) => {
+    removeUserAuth: (state) => {
       state.user = null;
     },
   },
@@ -78,16 +85,17 @@ export const authSlice = createSlice({
 
 // Exportamos
 export const {
-  updateAuthAll,
-  updateUser,
-  updateTokens,
-  updateAccessToken,
-  updateRefreshToken,
-  removeAuthAll,
-  removeTokens,
-  removeAccessToken,
-  removeRefreshToken,
-  removeUser,
+  updateAuthAllAuth,
+  updateUserAuth,
+  updateRecordingAuth,
+  updateTokensAuth,
+  updateAccessTokenAuth,
+  updateRefreshTokenAuth,
+  removeAllDataAuth,
+  removeTokensAuth,
+  removeAccessTokenAuth,
+  removeRefreshTokenAuth,
+  removeUserAuth,
 } = authSlice.actions;
 
 export default authSlice.reducer;

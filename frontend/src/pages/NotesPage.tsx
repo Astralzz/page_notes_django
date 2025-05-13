@@ -68,10 +68,9 @@ const NotesPage: React.FC = () => {
       {/* Grid de Notas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {user?.tasks?.length ? (
-          [...user.tasks, ...user.tasks].map((task) => (
-            <div className="group">
+          [...user.tasks, ...user.tasks].map((task, i) => (
+            <div className="group" key={i}>
               <div
-                key={task.id}
                 className={clsx(
                   "note-card p-4 rounded-xl shadow-md transition-all duration-300",
                   "transform transition-transform",

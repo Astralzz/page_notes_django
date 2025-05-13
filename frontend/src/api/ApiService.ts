@@ -70,26 +70,36 @@ abstract class ApiService {
    *
    * @returns {FormData} - FormData generado
    */
-  private toFormData(obj: Record<string, any>): FormData {
+  private toFormData(
+    obj: Record<string, any>,
+    form?: FormData,
+    namespace = ""
+  ): FormData {
     // Creamos un nuevo FormData
-    const formData = new FormData();
+    const formData = form || new FormData();
 
     // Recorremos el objeto
-    Object.entries(obj).forEach(([key, value]) => {
-      // ? Es un array
-      if (Array.isArray(value)) {
-        value.forEach((item, i) => formData.append(`${key}[${i}]`, item));
-        // ? File o Blob
-      } else if (value instanceof File || value instanceof Blob) {
-        formData.append(key, value);
-        // ? objeto
-      } else if (typeof value === "object" && value !== null) {
-        formData.append(key, JSON.stringify(value));
-        // ? indefinido o nulo
-      } else if (value !== undefined && value !== null) {
-        formData.append(key, value);
+    for (const property in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, property)) {
+        const formKey = namespace ? `${namespace}.${property}` : property;
+        const value = obj[property];
+
+        if (value instanceof Date) {
+          formData.append(formKey, value.toISOString());
+        } else if (value instanceof File || value instanceof Blob) {
+          formData.append(formKey, value);
+        } else if (
+          typeof value === "object" &&
+          value !== null &&
+          !(value instanceof File) &&
+          !(value instanceof Blob)
+        ) {
+          this.toFormData(value, formData, formKey);
+        } else if (value !== undefined && value !== null) {
+          formData.append(formKey, String(value));
+        }
       }
-    });
+    }
 
     return formData;
   }
@@ -100,19 +110,22 @@ abstract class ApiService {
    * @param headerApi - Headers personalizados
    * @param asMultipartFormData - Si es FormData
    * @param timeout - Tiempo de espera
+   * @param isContendFiles - Contiene archivos
    *
    * @returns {AxiosRequestConfig}
    */
   private getConfigAxios = (
     headerApi?: HeaderApiPayload,
     timeout?: number,
-    authorization?: AxiosHeaderValue
+    authorization?: AxiosHeaderValue,
+    isContendFiles?: boolean
   ): AxiosRequestConfig => {
     // ? Configuración
     const config: AxiosRequestConfig = {
       headers: {
         "Accept-Language": "es", // Idioma predeterminado
         Authorization: authorization,
+        ...(isContendFiles ? { "Content-Type": "multipart/form-data" } : {}),
         ...headerApi,
       },
       timeout, // n segundos
@@ -212,6 +225,7 @@ abstract class ApiService {
       asFormData?: boolean;
       timeout?: number;
       authorization?: AxiosHeaderValue;
+      isContendFiles?: boolean;
     }
   ): Promise<T> {
     try {
@@ -221,13 +235,19 @@ abstract class ApiService {
         asFormData = true,
         timeout,
         authorization,
+        isContendFiles = false,
       } = extra ?? {};
 
       // Detecta si hay que usar FormData
       const payload = asFormData && data ? this.toFormData(data) : data;
 
       // Configuración
-      const config = this.getConfigAxios(headerApi, timeout, authorization);
+      const config = this.getConfigAxios(
+        headerApi,
+        timeout,
+        authorization,
+        isContendFiles
+      );
       const baseURL = this.getUrlBackend();
       const url = `${baseURL}/${path}`;
 

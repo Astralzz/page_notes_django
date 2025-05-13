@@ -2,8 +2,23 @@ from rest_framework import serializers
 
 # Var globales
 MAX_PHOTO_SIZE = 3 * 1024 * 1024 # 3 MB
-ALLOWED_CONTENT_TYPES = ['image/png', 'image/jpeg'] # Tipos de contenido permitidos
-ALLOWED_EXTENSIONS = ['.png', '.jpg', '.jpeg'] # Extensiones permitidas
+ALLOWED_CONTENT_TYPES = [
+    'image/png',
+    'image/jpeg',
+    'image/webp',
+    'image/gif',
+    'image/bmp',
+    'image/tiff'
+]
+ALLOWED_EXTENSIONS = [
+    '.png',
+    '.jpg',
+    '.jpeg',
+    '.webp',
+    '.gif',
+    '.bmp',
+    '.tiff'
+]
 
 """
  Valida que el tamaño de la imagen no exceda MAX_PHOTO_SIZE.
