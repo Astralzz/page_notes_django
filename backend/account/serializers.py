@@ -164,7 +164,8 @@ class RegisterProfileSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         profile_data = validated_data.pop('profile')
         user = t_user.objects.create_user(**validated_data)
-        Profile.objects.create(user=user, **profile_data)
+        profile = Profile(user=user, **profile_data)
+        profile.save() # Guardar manual para que se guarde la foto
         return user
 
 """
@@ -174,11 +175,11 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
     
     # Perfil
     profile = ProfileUpdateSerializer(required=False)
+    tasks = TaskViewSerializer(many=True, read_only=True) 
 
-    # Modelo de usuario
     class Meta:
         model = t_user
-        fields = ('id', 'username', 'email', 'profile')
+        fields = ('id', 'username', 'email', 'profile', 'tasks')
         extra_kwargs = {
             'username': {'required': False},
             'email': {'required': False}
@@ -203,7 +204,10 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
 
         # Actualizar el perfil
         if profile_data:
-            Profile.objects.filter(user=instance).update(**profile_data)
+            profile = instance.profile
+            for attr, value in profile_data.items():
+                setattr(profile, attr, value)
+            profile.save() # Guardar manual para que se guarde la foto
 
         return instance
 

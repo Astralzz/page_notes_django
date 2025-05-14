@@ -29,6 +29,7 @@ export async function submitForm<T, V extends Record<string, any>>(
   options?: {
     notifySuccessMessage?: string;
     isSendNotifyError?: boolean;
+    resIsVoid?: boolean;
   }
 ): Promise<void> {
   try {
@@ -53,8 +54,14 @@ export async function submitForm<T, V extends Record<string, any>>(
       return;
     }
 
-    // Mandar error
-    throw new Error("No se ha podido enviar el formulario");
+    // ? Se espera void
+    if (options?.resIsVoid) {
+      setNotifyDefault(options?.notifySuccessMessage ?? "Éxito", "success");
+      return;
+    }
+
+    // ! Error
+    throw new Error("No se ha podido descifrar la respuesta");
 
     // ! Error
   } catch (errs) {
@@ -64,8 +71,7 @@ export async function submitForm<T, V extends Record<string, any>>(
     }
     // ? Errors es diferente
     onError?.(errs);
+  } finally {
+    onFinish?.();
   }
-
-  // Al final
-  onFinish?.();
 }

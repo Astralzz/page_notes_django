@@ -42,4 +42,11 @@ Todos los cambios importantes de este proyecto se documentarán en este archivo.
 - Re termino modal del perfil
 - Se mejoro lógica para guardar la imagen en django
 
+## [0.0.7] - 14-05-2025
+
+- Se termino lógica de registros
+- Se termino modales de notas y regiros
+- Se mejoro lógica
+- Se añadieron componentes
+
 ---

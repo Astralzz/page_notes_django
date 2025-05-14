@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAuthApp } from "@/hooks/useAuthApp";
 import { Plus } from "lucide-react";
 import gsap from "gsap";
 import clsx from "clsx";
+import ModalTask from "@/components/pages/tasks/ModalTask";
+import Task from "@/models/Task";
 
 /**
  *
@@ -13,6 +15,9 @@ import clsx from "clsx";
 const NotesPage: React.FC = () => {
   // Hooks
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const [isOpenModalTask, setOpenModalTask] = useState<boolean>(false);
+  const [taskSelect, setTaskSelect] = useState<Task | undefined>(undefined);
+  const [listTasks, setListTasks] = useState<Task[]>([]);
   const { user } = useAuthApp();
 
   // Animación al montar
@@ -31,69 +36,101 @@ const NotesPage: React.FC = () => {
     return () => ctx.revert();
   }, []);
 
+  // Al cambiar user se cierre
+  React.useEffect(() => {
+    setOpenModalTask(false);
+    setTaskSelect(undefined);
+    setListTasks(user?.tasks ?? []);
+    console.log("ss");
+  }, [user?.tasks]);
+
   return (
-    <div ref={containerRef} className="relative w-full">
-      {/* Header */}
-      <div
-        className={clsx(
-          "flex justify-between items-center mb-6",
-          "notes-title"
-        )}
-      >
-        <h2
+    <>
+      <div ref={containerRef} className="relative w-full">
+        {/* Header */}
+        <div
           className={clsx(
-            "text-3xl font-bold",
-            "text-pry-800 dark:text-pry-100"
+            "flex justify-between items-center mb-6",
+            "notes-title"
           )}
         >
-          Mis Notas
-        </h2>
-
-        {/* Botón flotante */}
-        <button className={clsx("create-note-button group")}>
-          <div
+          <h2
             className={clsx(
-              "flex items-center gap-2 px-3 py-2 rounded-xl shadow-md transition-transform transform",
-              "group-hover:scale-105 group-hover:rotate-1 hover:shadow-xl",
-              "bg-pry-500 dark:bg-pry-700 hover:bg-pry-600 dark:hover:bg-pry-600",
-              "text-white text-sm hover:cursor-pointer"
+              "text-3xl font-bold",
+              "text-pry-800 dark:text-pry-100"
             )}
           >
-            <Plus className="h-4 w-4" />
-            <span className="font-medium">Crear nueva nota</span>
-          </div>
-        </button>
+            Mis Notas
+          </h2>
+
+          {/* Botón flotante */}
+          <button className={clsx("create-note-button group")}>
+            <div
+              className={clsx(
+                "flex items-center gap-2 px-3 py-2 rounded-xl shadow-md transition-transform transform",
+                "group-hover:scale-105 group-hover:rotate-1 hover:shadow-xl",
+                "bg-pry-500 dark:bg-pry-700 hover:bg-pry-600 dark:hover:bg-pry-600",
+                "text-white text-sm hover:cursor-pointer"
+              )}
+              onClick={() => {
+                setTaskSelect(undefined);
+                setOpenModalTask(true);
+              }}
+            >
+              <Plus className="h-4 w-4" />
+              <span className="font-medium">Crear nueva nota</span>
+            </div>
+          </button>
+        </div>
+
+        {/* Grid de Notas */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {listTasks.length ? (
+            listTasks.map((task, i) => (
+              <div className="group" key={i}>
+                <div
+                  className={clsx(
+                    "note-card p-4 rounded-xl shadow-md transition-all duration-300",
+                    "transform transition-transform",
+                    "group-hover:scale-110 group-hover:rotate-1 hover:shadow-3xl",
+                    "bg-white dark:bg-pry-950 cursor-pointer"
+                  )}
+                  onClick={() => {
+                    setTaskSelect(task);
+                    setOpenModalTask(true);
+                  }}
+                >
+                  <h3 className="font-semibold text-pry-900 dark:text-pry-100">
+                    {task.title || "Sin título"}
+                  </h3>
+                  <p className="text-sm text-pry-700 dark:text-pry-300">
+                    {task.description || "Sin descripción"}
+                  </p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div
+              className={clsx("note-card", "text-pry-800 dark:text-pry-200")}
+            >
+              No tienes notas aún.
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Grid de Notas */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {user?.tasks?.length ? (
-          [...user.tasks, ...user.tasks].map((task, i) => (
-            <div className="group" key={i}>
-              <div
-                className={clsx(
-                  "note-card p-4 rounded-xl shadow-md transition-all duration-300",
-                  "transform transition-transform",
-                  "group-hover:scale-110 group-hover:rotate-1 hover:shadow-3xl",
-                  "bg-white dark:bg-pry-950 cursor-pointer"
-                )}
-              >
-                <h3 className="font-semibold text-pry-900 dark:text-pry-100">
-                  {task.title || "Sin título"}
-                </h3>
-                <p className="text-sm text-pry-700 dark:text-pry-300">
-                  {task.description || "Sin descripción"}
-                </p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className={clsx("note-card", "text-pry-800 dark:text-pry-200")}>
-            No tienes notas aún.
-          </div>
-        )}
-      </div>
-    </div>
+      {/* Modal task */}
+      {user && (
+        <ModalTask
+          statusModal={{
+            closeModal: () => setOpenModalTask(false),
+            isOpen: isOpenModalTask,
+          }}
+          task={taskSelect}
+          user={user}
+        />
+      )}
+    </>
   );
 };
 

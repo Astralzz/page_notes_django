@@ -36,12 +36,13 @@ const Initializer: React.FC<InitializerProps> = ({ children }) => {
         // ? No existe token
         if (!accessToken) return;
 
+        // Actualizamos token
+        await globalApiUserService.updateAccessTokenUser(accessToken);
+
         // Enviamos el formulario
-        submitForm<User, { token: string }>(
+        submitForm<User, object>(
           globalApiUserService.getUserByToken.bind(globalApiUserService),
-          {
-            token: accessToken,
-          },
+          {},
           {
             onSuccess(res) {
               updateUser(res);

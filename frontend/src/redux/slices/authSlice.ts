@@ -28,10 +28,26 @@ export const authSlice = createSlice({
       state.user = action.payload.user;
       state.tokens = action.payload.tokens;
       state.recordingAuth = action.payload.recordingAuth;
+      // Actualizamos foto
+      if (state.user?.profile) {
+        const foto = state.user?.profile?.foto_url ?? state.user?.profile?.foto;
+        state.user.profile = {
+          ...state.user.profile,
+          foto_url: foto,
+        };
+      }
     },
     // Actualizar el usuario
     updateUserAuth: (state, action: PayloadAction<User | null>) => {
       state.user = action.payload;
+      // Actualizamos foto
+      if (state.user?.profile) {
+        const foto = state.user?.profile?.foto_url ?? state.user?.profile?.foto;
+        state.user.profile = {
+          ...state.user.profile, // Spread the existing profile properties
+          foto_url: foto, // Update foto_url
+        };
+      }
     },
     // Actualizar el recording
     updateRecordingAuth: (state, action: PayloadAction<boolean>) => {

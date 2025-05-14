@@ -1,4 +1,4 @@
-import Task from "../models/Task";
+import Task, { TaskRegister } from "../models/Task";
 import { ApiListResponse, ParamQueryList } from "../types/apiTypes";
 import ApiService from "./ApiService";
 
@@ -29,12 +29,13 @@ class ApiTaskService extends ApiService {
 
   /**
    * Método para crear un nuevo task
-   * @param alumnoData Datos del nuevo task
+   * @param taskData Datos del nuevo task
    * @returns Respuesta de la creación del task
    */
-  async createTask(alumnoData: Task): Promise<Task> {
+  async createTask(taskData: TaskRegister): Promise<Task> {
     return this.request<Task>("POST", `${this.CRUD_PATH}/`, {
-      data: alumnoData,
+      data: taskData,
+      addAccessToken: true,
     });
   }
 
@@ -50,25 +51,31 @@ class ApiTaskService extends ApiService {
 
   /**
    * Método para actualizar los datos de un task
-   * @param alumnoId ID del task
-   * @param alumnoData Datos actualizados del task
+   * @param taskId ID del task
+   * @param taskData Datos actualizados del task
    *
    * @returns {Promise<Task>} - Respuesta con el task actualizado
    */
-  async updateTask(alumnoId: number, alumnoData: Task): Promise<Task> {
-    return this.request<Task>("PUT", `${this.CRUD_PATH}/${alumnoId}/`, {
-      data: alumnoData,
+  async updateTask(data: {
+    taskData: TaskRegister;
+    taskId: number;
+  }): Promise<Task> {
+    return this.request<Task>("PUT", `${this.CRUD_PATH}/${data.taskId}/`, {
+      data: data.taskData,
+      addAccessToken: true,
     });
   }
 
   /**
    * Método para eliminar un task
-   * @param alumnoId ID del task a eliminar
+   * @param idTak ID del task a eliminar
    *
    * @returns {Promise<void>} - Respuesta de la eliminación
    */
-  async deleteTask(alumnoId: number): Promise<void> {
-    return this.request<void>("DELETE", `${this.CRUD_PATH}/${alumnoId}/`);
+  async deleteTask(data: { idTak: number }): Promise<void> {
+    return this.request<void>("DELETE", `${this.CRUD_PATH}/${data.idTak}/`, {
+      addAccessToken: true,
+    });
   }
 }
 

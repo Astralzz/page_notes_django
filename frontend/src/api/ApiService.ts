@@ -1,11 +1,11 @@
-import axios, {
-  AxiosRequestConfig,
-  AxiosError,
-  AxiosResponse,
-  AxiosHeaderValue,
-} from "axios";
+import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from "axios";
 import { HeaderApiPayload } from "../const/api/HeaderApi.ts";
 import { viewDebugApp } from "@/funcs/debug.ts";
+
+/**
+ * @var {?string} - Token de acceso
+ */
+let ACCESS_TOKEN_USER: string;
 
 /**
  * @description - Clase base para manejar operaciones HTTP comunes
@@ -55,6 +55,11 @@ abstract class ApiService {
    * @returns {T}
    */
   private checkIntegrityData = <T>(res: AxiosResponse, mensaje?: string): T => {
+    // Éxito en los deletes
+    if (res?.status === 204) {
+      return null as T;
+    }
+
     // ? Sin datos
     if (!res?.data) {
       throw new Error(
@@ -117,14 +122,21 @@ abstract class ApiService {
   private getConfigAxios = (
     headerApi?: HeaderApiPayload,
     timeout?: number,
-    authorization?: AxiosHeaderValue,
-    isContendFiles?: boolean
+    isContendFiles?: boolean,
+    addAccessToken?: boolean
   ): AxiosRequestConfig => {
+    // ? No hay token y se requiere
+    if (addAccessToken && !ACCESS_TOKEN_USER) {
+      throw new Error("No se encontró el token de acceso a la sesión");
+    }
+
     // ? Configuración
     const config: AxiosRequestConfig = {
       headers: {
         "Accept-Language": "es", // Idioma predeterminado
-        Authorization: authorization,
+        Authorization: addAccessToken
+          ? `Bearer ${ACCESS_TOKEN_USER}`
+          : undefined,
         ...(isContendFiles ? { "Content-Type": "multipart/form-data" } : {}),
         ...headerApi,
       },
@@ -224,8 +236,8 @@ abstract class ApiService {
       headerApi?: HeaderApiPayload;
       asFormData?: boolean;
       timeout?: number;
-      authorization?: AxiosHeaderValue;
       isContendFiles?: boolean;
+      addAccessToken?: boolean;
     }
   ): Promise<T> {
     try {
@@ -234,8 +246,8 @@ abstract class ApiService {
         headerApi,
         asFormData = true,
         timeout,
-        authorization,
         isContendFiles = false,
+        addAccessToken = false,
       } = extra ?? {};
 
       // Detecta si hay que usar FormData
@@ -245,8 +257,8 @@ abstract class ApiService {
       const config = this.getConfigAxios(
         headerApi,
         timeout,
-        authorization,
-        isContendFiles
+        isContendFiles,
+        addAccessToken
       );
       const baseURL = this.getUrlBackend();
       const url = `${baseURL}/${path}`;
@@ -258,7 +270,6 @@ abstract class ApiService {
           config,
           method,
           payload,
-          authorization,
         },
         {
           hiddenLineFinish: true,
@@ -309,6 +320,17 @@ abstract class ApiService {
       );
       return await this.catchAxiosError<T>(error);
     }
+  }
+
+  /**
+   * Actualizar token de acceso
+   *
+   * @param token - token de acceso del usuario.
+   *
+   * @returns {Promise<void>}
+   */
+  public async updateAccessTokenUser(token: string): Promise<void> {
+    ACCESS_TOKEN_USER = token;
   }
 }
 

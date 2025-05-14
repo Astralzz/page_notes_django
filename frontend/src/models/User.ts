@@ -23,6 +23,7 @@ export type Profile = {
   apellido?: string;
   telefono?: string;
   foto_url?: string;
+  foto?: string;
 };
 
 export default User;

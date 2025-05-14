@@ -7,9 +7,9 @@ import { useReduxDispatch } from "@/redux/hook";
 import { removeAllDataAuth } from "@/redux/slices/authSlice";
 import { updateTheme } from "@/redux/slices/themeSlice";
 import { useThemeApp } from "@/hooks/useThemeApp";
+import ModalUser from "../pages/user/ModalUser";
 import gsap from "gsap";
 import clsx from "clsx";
-import ModalUser from "../modals/ModalUser";
 
 // Props
 interface DashboardProps {

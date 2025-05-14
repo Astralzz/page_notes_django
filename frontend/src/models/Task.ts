@@ -10,4 +10,7 @@ interface Task {
   completed: boolean;
 }
 
+// Register model: igual que task pero sin id
+export type TaskRegister = Omit<Task, "id">;
+
 export default Task;

@@ -15,6 +15,7 @@ interface ImageUploaderFormikProps {
   helpText?: string;
   accept?: Accept;
   single?: boolean;
+  pathImgPreview?: string;
 }
 
 /**
@@ -34,9 +35,10 @@ export const ImageUploaderFormik: React.FC<ImageUploaderFormikProps> = ({
   helpText,
   accept = { "image/*": [] },
   single = false,
+  pathImgPreview,
 }) => {
   // State to manage the preview of the image
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | undefined>(pathImgPreview);
 
   // Callback to handle the drop event
   const onDrop = useCallback(
@@ -54,7 +56,7 @@ export const ImageUploaderFormik: React.FC<ImageUploaderFormikProps> = ({
 
   // Function to clear the image preview
   const clearImage = () => {
-    setPreview(null);
+    setPreview(undefined);
     setFieldValue(name, null);
   };
 

@@ -35,11 +35,11 @@ interface ModalDefaultProps {
 }
 
 const sizeClasses = {
-  sm: "max-w-sm",
-  md: "max-w-md",
-  lg: "max-w-lg",
-  xl: "max-w-xl",
-  "2xl": "max-w-2xl",
+  sm: "min-w-sm",
+  md: "min-w-md",
+  lg: "min-w-lg",
+  xl: "min-w-xl",
+  "2xl": "min-w-2xl",
   full: "w-full max-w-full",
 };
 
@@ -77,6 +77,7 @@ const ModalDefault: React.FC<ModalDefaultProps> = ({
         className={clsx(
           "rounded-xl border p-6 shadow-xl transition-all bg-gradient-to-br",
           sizeClasses[size],
+          "flex flex-col",
           fullWidth && "w-full",
           {
             "from-pry-100 to-pry-300": !isThemeDark,
@@ -109,7 +110,7 @@ const ModalDefault: React.FC<ModalDefaultProps> = ({
         {/* Body */}
         <div
           className={clsx(
-            "overflow-y-auto custom-scrollbar",
+            "overflow-y-auto custom-scrollbar flex-1 min-h-0",
             classNames?.content
           )}
           style={{ maxHeight }}

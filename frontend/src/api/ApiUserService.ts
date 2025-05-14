@@ -57,23 +57,32 @@ class ApiUserService extends ApiService {
    *
    * @returns {Promise<User>} - Respuesta con el user
    */
-  async getUserByToken(data: { token: string }): Promise<User> {
+  async getUserByToken(): Promise<User> {
     return this.request<User>("GET", `${this.CRUD_PATH}/me/`, {
-      authorization: `Bearer ${data.token}`,
+      addAccessToken: true,
     });
   }
 
   /**
    * Método para actualizar los datos de un user
-   * @param alumnoId ID del user
-   * @param alumnoData Datos actualizados del user
+   * @param userData ID del user
+   * @param userId Datos actualizados del user
    *
    * @returns {Promise<User>} - Respuesta con el user actualizado
    */
-  async updateUser(alumnoData: User, alumnoId: number): Promise<User> {
-    return this.request<User>("PUT", `${this.CRUD_PATH}/user/${alumnoId}/`, {
-      data: alumnoData,
-    });
+  async updateUser(data: {
+    userData: UserRegister;
+    userId: number;
+  }): Promise<User> {
+    return this.request<User>(
+      "PUT",
+      `${this.CRUD_PATH}/user/${data?.userId ?? 0}/`,
+      {
+        data: data.userData,
+        isContendFiles: true,
+        addAccessToken: true,
+      }
+    );
   }
 
   /**
