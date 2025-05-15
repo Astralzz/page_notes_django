@@ -19,7 +19,6 @@ const ProfileUser: React.FC<DashboardProps> = ({ user, updateAction }) => {
   const { profile } = user;
   const fullName = `${profile?.nombre ?? "Nombre"} ${profile?.apellido ?? ""}`;
   const avatar = profile?.foto_url;
-  console.log("avatar", profile?.foto_url);
 
   return (
     <div className="w-full space-y-6">

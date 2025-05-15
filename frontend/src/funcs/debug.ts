@@ -3,7 +3,7 @@ import moment from "moment";
 /**
  * Control global para activar/desactivar logs
  */
-const DEBUG_ENABLED = true;
+const DEBUG_ENABLED = false;
 
 /**
  * Visualizar datos de salida para debugging
@@ -12,7 +12,7 @@ const DEBUG_ENABLED = true;
  * @param {Record<string, any>} data - Objeto con datos a mostrar
  */
 export const viewDebugApp = (
-  data: Record<string, any> | any, // Ahora puede aceptar cualquier tipo de dato
+  data: Record<string, any> | any,
   options?: {
     title?: string;
     hiddenHour?: string;

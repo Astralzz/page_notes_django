@@ -27,29 +27,13 @@ const ModalTask: React.FC<DashboardProps> = ({ statusModal, task, user }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Al abrir
-  useEffect(() => {
-    // ? Se abrió y ahi ref
-    if (statusModal.isOpen && modalRef.current) {
-      gsap.fromTo(
-        modalRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
-      );
-      return;
-    }
-
-    // Cerrado
-    if (task) setTimeout(() => setIsForm(false), 500);
-  }, [statusModal.isOpen, task]);
-
   // Animación al cambiar de pestaña
   useEffect(() => {
     if (contentRef.current) {
       gsap.fromTo(
         contentRef.current,
-        { opacity: 0, x: 50 },
-        { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }
+        { opacity: 0, scale: 0.95 },
+        { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }
       );
     }
   }, [isForm]);
@@ -74,6 +58,7 @@ const ModalTask: React.FC<DashboardProps> = ({ statusModal, task, user }) => {
               task={task}
               updateAction={() => setIsForm(true)}
               deleteFinishAction={() => statusModal.closeModal()}
+              user={user}
             />
           ) : (
             <UpdateCreateTask

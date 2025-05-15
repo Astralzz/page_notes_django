@@ -5,6 +5,16 @@ import gsap from "gsap";
 import clsx from "clsx";
 import ModalTask from "@/components/pages/tasks/ModalTask";
 import Task from "@/models/Task";
+import FilterSelect from "@/components/selects/FilterSelect";
+import { useThemeApp } from "@/hooks/useThemeApp";
+
+const filterOptions = [
+  { label: "Todas", value: "all" },
+  { label: "Completadas", value: "completed" },
+  { label: "No completadas", value: "incomplete" },
+];
+
+type FilterType = (typeof filterOptions)[number]["value"];
 
 /**
  *
@@ -15,9 +25,11 @@ import Task from "@/models/Task";
 const NotesPage: React.FC = () => {
   // Hooks
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const [filter, setFilter] = useState<FilterType>("all");
   const [isOpenModalTask, setOpenModalTask] = useState<boolean>(false);
   const [taskSelect, setTaskSelect] = useState<Task | undefined>(undefined);
   const [listTasks, setListTasks] = useState<Task[]>([]);
+  const { isThemeDark } = useThemeApp();
   const { user } = useAuthApp();
 
   // Animación al montar
@@ -41,8 +53,19 @@ const NotesPage: React.FC = () => {
     setOpenModalTask(false);
     setTaskSelect(undefined);
     setListTasks(user?.tasks ?? []);
-    console.log("ss");
+    setFilter("all");
   }, [user?.tasks]);
+
+  // Notas filtradas
+  const getFilteredTasks = React.useMemo(
+    () =>
+      listTasks.filter((task) => {
+        if (filter === "completed") return task.completed;
+        if (filter === "incomplete") return !task.completed;
+        return true;
+      }),
+    [filter, listTasks]
+  );
 
   return (
     <>
@@ -50,10 +73,11 @@ const NotesPage: React.FC = () => {
         {/* Header */}
         <div
           className={clsx(
-            "flex justify-between items-center mb-6",
+            "flex flex-col sm:flex-row sm:justify-between sm:items-center gap-y-4 sm:gap-y-0 mb-6",
             "notes-title"
           )}
         >
+          {/* Título */}
           <h2
             className={clsx(
               "text-3xl font-bold",
@@ -63,30 +87,52 @@ const NotesPage: React.FC = () => {
             Mis Notas
           </h2>
 
-          {/* Botón flotante */}
-          <button className={clsx("create-note-button group")}>
-            <div
-              className={clsx(
-                "flex items-center gap-2 px-3 py-2 rounded-xl shadow-md transition-transform transform",
-                "group-hover:scale-105 group-hover:rotate-1 hover:shadow-xl",
-                "bg-pry-500 dark:bg-pry-700 hover:bg-pry-600 dark:hover:bg-pry-600",
-                "text-white text-sm hover:cursor-pointer"
-              )}
-              onClick={() => {
-                setTaskSelect(undefined);
-                setOpenModalTask(true);
-              }}
-            >
-              <Plus className="h-4 w-4" />
-              <span className="font-medium">Crear nueva nota</span>
+          {/* Contenedor del filtro y botón */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            {/* Selector de filtro */}
+            <div className={clsx("create-note-button group")}>
+              <FilterSelect
+                value={filter}
+                onChange={setFilter}
+                options={filterOptions}
+                placeholder="Filtrar notas"
+                isThemeDark={isThemeDark}
+                classNames={{
+                  trigger: clsx(
+                    "flex items-center gap-2 px-3 py-2 rounded-xl shadow-md transition-transform transform",
+                    "group-hover:scale-105 group-hover:rotate-1 hover:shadow-xl",
+                    "bg-pry-500 dark:bg-pry-700 hover:bg-pry-600 dark:hover:bg-pry-600",
+                    "text-white text-sm hover:cursor-pointer border-none"
+                  ),
+                }}
+              />
             </div>
-          </button>
+
+            {/* Botón flotante */}
+            <button className={clsx("create-note-button group")}>
+              <div
+                className={clsx(
+                  "flex items-center gap-2 px-3 py-2 rounded-xl shadow-md transition-transform transform",
+                  "group-hover:scale-105 group-hover:rotate-1 hover:shadow-xl",
+                  "bg-pry-500 dark:bg-pry-700 hover:bg-pry-600 dark:hover:bg-pry-600",
+                  "text-white text-sm hover:cursor-pointer"
+                )}
+                onClick={() => {
+                  setTaskSelect(undefined);
+                  setOpenModalTask(true);
+                }}
+              >
+                <Plus className="h-4 w-4" />
+                <span className="font-medium">Crear nueva nota</span>
+              </div>
+            </button>
+          </div>
         </div>
 
         {/* Grid de Notas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {listTasks.length ? (
-            listTasks.map((task, i) => (
+          {getFilteredTasks.length ? (
+            getFilteredTasks.map((task, i) => (
               <div className="group" key={i}>
                 <div
                   className={clsx(

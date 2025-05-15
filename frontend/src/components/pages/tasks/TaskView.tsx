@@ -15,7 +15,7 @@ import useAuthActions from "@/hooks/useAuthActions";
  */
 interface DashboardProps {
   task: Task;
-  user?: User;
+  user: User;
   updateAction: () => void;
   deleteFinishAction?: () => void;
 }
@@ -60,6 +60,9 @@ const TaskView: React.FC<DashboardProps> = ({
   // Acción
   const [isDeleting, deleteTask] = useTransitionSubmit({
     fn: React.useCallback(async () => {
+      // Id task
+      const idTask = task.id;
+
       // Enviamos el formulario
       submitForm<
         void,
@@ -69,11 +72,11 @@ const TaskView: React.FC<DashboardProps> = ({
       >(
         globalApiTaskService.deleteTask.bind(globalApiTaskService),
         {
-          idTak: task.id,
+          idTak: idTask,
         },
         {
           onSuccess() {
-            removeTask(task.id);
+            removeTask(idTask);
             deleteFinishAction?.();
           },
           onFinish: () => setIsDialogOpen(false),

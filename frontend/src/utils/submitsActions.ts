@@ -57,6 +57,7 @@ export async function submitForm<T, V extends Record<string, any>>(
     // ? Se espera void
     if (options?.resIsVoid) {
       setNotifyDefault(options?.notifySuccessMessage ?? "Éxito", "success");
+      onSuccess?.(undefined as unknown as T);
       return;
     }
 

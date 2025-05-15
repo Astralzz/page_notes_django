@@ -1,7 +1,15 @@
 import React from "react";
 import User from "@/models/User";
 import { Button } from "../ui/button";
-import { LogOut, Moon, Sun, User as UserIcon } from "lucide-react";
+import {
+  Github,
+  Globe,
+  Linkedin,
+  LogOut,
+  Moon,
+  Sun,
+  User as UserIcon,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useReduxDispatch } from "@/redux/hook";
 import { removeAllDataAuth } from "@/redux/slices/authSlice";
@@ -10,6 +18,7 @@ import { useThemeApp } from "@/hooks/useThemeApp";
 import ModalUser from "../pages/user/ModalUser";
 import gsap from "gsap";
 import clsx from "clsx";
+import LayoutWrapper from "../wrappers/LayoutWrapper";
 
 // Props
 interface DashboardProps {
@@ -70,12 +79,7 @@ const Dashboard: React.FC<DashboardProps> = ({ children, user }) => {
   }, [dispatch, isThemeDark]);
 
   return (
-    <div
-      className={clsx(
-        "min-h-screen flex items-start justify-start p-4",
-        "bg-gradient-to-br from-pry-100 to-pry-300 dark:from-pry-950 dark:to-pry-800"
-      )}
-    >
+    <LayoutWrapper className="items-start justify-start px-4 py-6">
       <section
         ref={containerRef}
         className={clsx("w-full max-w-4xl mx-auto p-4 transition-all")}
@@ -99,7 +103,7 @@ const Dashboard: React.FC<DashboardProps> = ({ children, user }) => {
                 {(user?.profile?.nombre ?? "N").charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <div>
+            <div className="text-start">
               <h1 className="text-2xl md:text-3xl font-bold text-pry-900 dark:text-pry-100">
                 Hola, {user?.profile?.nombre || user?.username}
               </h1>
@@ -160,9 +164,41 @@ const Dashboard: React.FC<DashboardProps> = ({ children, user }) => {
         {/* Footer */}
         <footer className="mt-12 text-center text-sm text-pry-600 dark:text-pry-400">
           <p>
-            &copy; {new Date().getFullYear()} Pagina de notas creada por Astralz
-            (Edain JCC) ✨
+            &copy; {new Date().getFullYear()} Página de notas creada por{" "}
+            <span className="font-semibold text-pry-800 dark:text-pry-200">
+              Astralz (Edain JCC)
+            </span>{" "}
+            ✨
           </p>
+          <div className="mt-3 flex justify-center gap-6">
+            <a
+              href="https://astralzz.github.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-transform hover:scale-110 hover:text-pry-700 dark:hover:text-pry-200"
+              aria-label="Portafolio"
+            >
+              <Globe className="w-5 h-5 inline" />
+            </a>
+            <a
+              href="https://github.com/Astralzz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-transform hover:scale-110 hover:text-pry-700 dark:hover:text-pry-200"
+              aria-label="GitHub"
+            >
+              <Github className="w-5 h-5 inline" />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/edain-jcc"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-transform hover:scale-110 hover:text-pry-700 dark:hover:text-pry-200"
+              aria-label="LinkedIn"
+            >
+              <Linkedin className="w-5 h-5 inline" />
+            </a>
+          </div>
         </footer>
       </section>
 
@@ -174,7 +210,7 @@ const Dashboard: React.FC<DashboardProps> = ({ children, user }) => {
         }}
         user={user}
       />
-    </div>
+    </LayoutWrapper>
   );
 };
 

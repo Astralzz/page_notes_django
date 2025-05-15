@@ -49,4 +49,12 @@ Todos los cambios importantes de este proyecto se documentarán en este archivo.
 - Se mejoro lógica
 - Se añadieron componentes
 
+## [1.0.0] - 15-05-2025
+
+- Se Crearon nuevos componentes
+- Se añadieron nuevas funciones
+- Si mejoro es la lógica
+- Se terminaron los últimos detalles
+- Primera versión disponible
+
 ---

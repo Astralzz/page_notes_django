@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { useReduxSelector } from "../redux/hook";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils"; // Si usas tailwind utils para clases
+import { useThemeApp } from "@/hooks/useThemeApp";
+import LayoutWrapper from "@/components/wrappers/LayoutWrapper";
+import gsap from "gsap";
 
 /**
  * 404 page
@@ -8,25 +12,70 @@ import { useReduxSelector } from "../redux/hook";
  * @returns {JSX.Element}
  */
 const NotFoundPage: React.FC = () => {
-  // Variables redux
-  const theme = useReduxSelector((state) => state.stateTheme.theme);
+  // Refs
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const messageRef = useRef<HTMLParagraphElement>(null);
+  const buttonRef = useRef<HTMLAnchorElement>(null);
+
+  // Hooks
+  const { isThemeDark } = useThemeApp();
+
+  // Animaciones
+  useEffect(() => {
+    const tl = gsap.timeline({
+      defaults: { ease: "power3.out", duration: 0.8 },
+    });
+
+    tl.fromTo(
+      titleRef.current,
+      { y: -50, opacity: 0 },
+      { y: 0, opacity: 1 },
+      "<"
+    )
+      .fromTo(
+        messageRef.current,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1 },
+        "-=0.3"
+      )
+      .fromTo(
+        buttonRef.current,
+        { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 1 },
+        "-=0.4"
+      );
+  }, []);
 
   return (
-    <main className={theme}>
-      <div className="bg-primary-100 dark:bg-primary-500 text-gray-900 dark:text-gray-100 w-full flex flex-col items-center text-center justify-center min-h-screen">
-        {/* Header */}
-        <h1 className="text-6xl font-bold">404</h1>
-        {/* Message */}
-        <p className="text-xl mt-2">Página no encontrada</p>
-        {/* Button */}
-        <Link
-          to="/"
-          className="mt-6 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
+    <LayoutWrapper>
+      <div className="space-y-4">
+        <h1
+          ref={titleRef}
+          className={cn("text-7xl font-extrabold drop-shadow-lg", {
+            "text-white": isThemeDark,
+            "text-gray-900": !isThemeDark,
+          })}
         >
-          Volver al inicio
+          404
+        </h1>
+
+        <p
+          ref={messageRef}
+          className={cn("text-2xl", {
+            "text-white": isThemeDark,
+            "text-gray-800": !isThemeDark,
+          })}
+        >
+          Página no encontrada
+        </p>
+
+        <Link to="/" ref={buttonRef}>
+          <Button className="rounded-xl shadow-md hover:shadow-lg transition-all hover:cursor-pointer">
+            Volver al inicio
+          </Button>
         </Link>
       </div>
-    </main>
+    </LayoutWrapper>
   );
 };
 

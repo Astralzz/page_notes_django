@@ -4,6 +4,7 @@ import LoginFormik from "@/components/formik/LoginFormik";
 import ToggleAuthMessage from "@/components/Toggles/ToggleAuthMessage";
 import { gsap } from "gsap";
 import clsx from "clsx";
+import LayoutWrapper from "@/components/wrappers/LayoutWrapper";
 
 /**
  * Login page
@@ -37,12 +38,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div
-      className={clsx(
-        "min-h-screen flex items-center justify-center",
-        "bg-gradient-to-br from-pry-100 to-pry-300 dark:from-pry-950 dark:to-pry-800"
-      )}
-    >
+    <LayoutWrapper>
       <div
         className={clsx("w-full perspective-1000", {
           "max-w-3xl": isLogin,
@@ -85,7 +81,7 @@ const Login: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </LayoutWrapper>
   );
 };
 

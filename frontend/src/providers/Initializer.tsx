@@ -6,6 +6,8 @@ import { Toaster } from "react-hot-toast";
 import { globalApiUserService } from "@/api/ApiUserService";
 import useAuthActions from "@/hooks/useAuthActions";
 import { useTransitionSubmit } from "@/hooks/useTransitionSubmit";
+import GlobalLoaderPage from "@/components/loadings/GlobalLoaderPage";
+import { useThemeApp } from "@/hooks/useThemeApp";
 
 // Props
 interface InitializerProps {
@@ -23,6 +25,7 @@ const Initializer: React.FC<InitializerProps> = ({ children }) => {
   // ? Hooks
   const { updateUser, removeTokens } = useAuthActions();
   const { tokens, recordingAuth } = useAuthApp();
+  const { isThemeDark } = useThemeApp();
 
   /**
    * Handle form submission
@@ -69,7 +72,9 @@ const Initializer: React.FC<InitializerProps> = ({ children }) => {
   }, [tokens?.access]);
 
   // Efecto para inicializar la autenticación
-  if (isPendingGetUser) return <div>Cargando autenticación...</div>;
+  if (isPendingGetUser) {
+    return <GlobalLoaderPage isThemeDark={isThemeDark} />;
+  }
 
   return (
     <>

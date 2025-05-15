@@ -50,8 +50,6 @@ const UpdateCreateTask: React.FC<DashboardProps> = ({
     [toggleAction, updateUser, user]
   );
 
-  console.log(user);
-
   // Actualizar task
   const create = React.useCallback(
     (newTask: Task) => {
