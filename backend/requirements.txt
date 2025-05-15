@@ -1,0 +1,11 @@
+# Paquetes principales
+Django==5.2.1
+djangorestframework==3.15.1
+djangorestframework-simplejwt==5.3.0
+django-cors-headers==4.3.1
+django-seed==0.3.1
+psycopg2-binary==2.9.9
+
+# Paquetes adicionales necesarios (¡Faltaban estos!)
+python-dotenv==1.0.0  # Para el manejo de variables de entorno
+gunicorn==21.2.0       # Servidor production (opcional pero recomendado)

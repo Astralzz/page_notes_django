@@ -30,8 +30,8 @@ const registerSchema = {
     recording: Yup.boolean().required("Requerido"),
   }),
   initialValues: {
-    username: "woodardgary",
-    password: "password123",
+    username: "",
+    password: "",
     recording: true,
   },
 };

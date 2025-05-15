@@ -57,4 +57,9 @@ Todos los cambios importantes de este proyecto se documentarán en este archivo.
 - Se terminaron los últimos detalles
 - Primera versión disponible
 
+## [1.0.1] - 16-05-2025
+
+- Se creo la documentación del proyecto
+- Se mejoraron detalles
+
 ---
